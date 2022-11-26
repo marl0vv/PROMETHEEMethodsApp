@@ -4,8 +4,6 @@
 
 #include <QPushButton>
 
-#define DEFAULT_COLUMN_COUNT 2
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -22,7 +20,7 @@ void MainWindow::buildTable()
 {
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->horizontalHeader()->setVisible(false);
-    ui->tableWidget->setColumnCount(m_criterias + DEFAULT_COLUMN_COUNT);
+    ui->tableWidget->setColumnCount(m_criterias + m_defaultColumnCount);
     ui->tableWidget->setRowCount(m_actions);
 
     QWidget* pWidget = new QWidget();
