@@ -14,12 +14,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void BuildTable();
+    void buildTable();
 
 private slots:
     void on_actionNew_triggered();
 
 private:
+    const int m_defaultColumnCount = 2;
     Ui::MainWindow *ui;
     int m_actions;
     int m_criterias;
