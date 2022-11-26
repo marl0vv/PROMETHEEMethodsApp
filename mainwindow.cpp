@@ -2,6 +2,10 @@
 #include "./ui_mainwindow.h"
 #include "newproblemdialog.h"
 
+#include <QPushButton>
+
+#define DEFAULT_COLUMN_COUNT 2
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -14,8 +18,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void buildTable()
+void MainWindow::buildTable()
 {
+    ui->tableWidget->verticalHeader()->setVisible(false);
+    ui->tableWidget->horizontalHeader()->setVisible(false);
+    ui->tableWidget->setColumnCount(m_criterias + DEFAULT_COLUMN_COUNT);
+    ui->tableWidget->setRowCount(m_actions);
+
+    QWidget* pWidget = new QWidget();
+    QPushButton* btn_edit = new QPushButton();
+    btn_edit->setText("Edit");
+    QHBoxLayout* pLayout = new QHBoxLayout(pWidget);
+    pLayout->addWidget(btn_edit);
+    pLayout->setAlignment(Qt::AlignCenter);
+    pLayout->setContentsMargins(0, 0, 0, 0);
+    pWidget->setLayout(pLayout);
+    ui->tableWidget->setCellWidget(0, 3, pWidget);
 
 }
 void MainWindow::on_actionNew_triggered()
@@ -26,6 +44,7 @@ void MainWindow::on_actionNew_triggered()
     m_actions = newProblemDialog.getActions();
     m_criterias = newProblemDialog.getCriterias();
 
+    buildTable();
 
 }
 
