@@ -12,8 +12,10 @@ class NewProblemDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProblemDialog(QWidget *parent = nullptr, int* actions = 0, int* criterias = 0);
+    explicit NewProblemDialog(QWidget *parent = nullptr);
 
+    int getActions(){return m_actions;}
+    int getCriterias(){return m_criterias;}
     ~NewProblemDialog();
 
 private slots:
@@ -21,6 +23,8 @@ private slots:
 
 private:
     Ui::NewProblemDialog *ui;
+    int m_actions;
+    int m_criterias;
 };
 
 #endif // NEWPROBLEMDIALOG_H

@@ -16,6 +16,7 @@ NewProblemDialog::~NewProblemDialog()
 
 void NewProblemDialog::on_buttonBox_accepted()
 {
-
+    m_actions = ui->spinBoxActions->value();
+    m_criterias = ui->spinBoxCriterias->value();
 }
 

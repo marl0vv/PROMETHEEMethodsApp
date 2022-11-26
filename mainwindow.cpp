@@ -14,11 +14,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void buildTable()
+{
+
+}
 void MainWindow::on_actionNew_triggered()
 {
-    NewProblemDialog newProblemDialog;
+    NewProblemDialog newProblemDialog(nullptr);
     newProblemDialog.setModal(true);
     newProblemDialog.exec();
+    m_actions = newProblemDialog.getActions();
+    m_criterias = newProblemDialog.getCriterias();
+
 
 }
 
