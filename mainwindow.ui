@@ -16,7 +16,38 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTableWidget" name="tableWidget"/>
+     <widget class="QTableWidget" name="tableWidget">
+      <row>
+       <property name="text">
+        <string>Мин./Макс.</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Вес</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>New Row</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Минимум</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Максимум</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>Среднее</string>
+       </property>
+      </row>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -31,7 +62,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Файл</string>
     </property>
     <addaction name="separator"/>
     <addaction name="separator"/>
@@ -42,7 +73,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew">
    <property name="text">
-    <string>New</string>
+    <string>Создать новый...</string>
    </property>
   </action>
  </widget>
