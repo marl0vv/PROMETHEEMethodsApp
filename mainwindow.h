@@ -21,6 +21,7 @@ private slots:
 
 private:
     const int m_defaultColumnCount = 2;
+    const int m_defaultRowCount = 13;
     Ui::MainWindow *ui;
     int m_actions;
     int m_criterias;
