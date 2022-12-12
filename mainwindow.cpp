@@ -4,6 +4,9 @@
 
 #include <QPushButton>
 #include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -24,8 +27,65 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setColumnTypeNum(int column)
+{
+    for (int i = 0; i < m_actions; i++)
+    {
+        QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+        actionValue->setMinimum(INT_MIN);
+        actionValue->setMaximum(INT_MAX);
+        ui->tableWidget->setCellWidget(13+i, column, actionValue);
+
+    }
+}
+void MainWindow::setColumnTypeMoney(int column)
+{
+
+    for (int i = 0; i < m_actions; i++)
+    {
+        QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+        actionValue->setPrefix("₽ ");
+        actionValue->setMaximum(INT_MAX);
+        ui->tableWidget->setCellWidget(13+i, column, actionValue);
+
+    }
+}
+void MainWindow::setColumnTypeQuality(int column)
+{
+    for (int i = 0; i < m_actions; i++)
+    {
+            QComboBox* actionValue = new QComboBox();
+            actionValue->addItem("n/a");
+            actionValue->addItem("очень плохо");
+            actionValue->addItem("плохо");
+            actionValue->addItem("средне");
+            actionValue->addItem("хорошо");
+            actionValue->addItem("очень хорошо");
+            ui->tableWidget->setCellWidget(13+i, column, actionValue);
+    }
+}
+void MainWindow::onComboBoxChanged(int index)
+{
+    qDebug() << "column:" << sender()->property("column").toInt();
+    int column = sender()->property("column").toInt();
+    if (index == 0)
+    {
+        setColumnTypeNum(column);
+    }
+    if (index == 1)
+    {
+        setColumnTypeMoney(column);
+    }
+    if (index == 2)
+    {
+        setColumnTypeQuality(column);
+    }
+
+   // qDebug() << index;
+}
 void MainWindow::buildTable()
 {
+
     //Создаём таблицу и заголовки
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->horizontalHeader()->setVisible(false);
@@ -85,6 +145,8 @@ void MainWindow::buildTable()
         //значения у actions. Скорее всего это нужно будет делать через слоты.
         //Пока что построю остальную таблицу, там посмотрим.
         QComboBox* comboScale = new QComboBox();
+        comboScale->setProperty("column", QVariant(2+i));
+        connect(comboScale, &QComboBox::currentIndexChanged, this, &MainWindow::onComboBoxChanged);
         ui->tableWidget->setCellWidget(2, 2+i, comboScale);
         comboScale->addItem("Числовая");
         comboScale->addItem("Денежная");
@@ -106,16 +168,18 @@ void MainWindow::buildTable()
         //вес
         ui->tableWidget->setItem(6, 2+i, new QTableWidgetItem(QString::number(1)));
 
+
         ui->tableWidget->setItem(8, 2+i, new QTableWidgetItem("n/a"));
         ui->tableWidget->setItem(9, 2+i, new QTableWidgetItem("n/a"));
         ui->tableWidget->setItem(10, 2+i, new QTableWidgetItem("n/a"));
         ui->tableWidget->setItem(11, 2+i, new QTableWidgetItem("n/a"));
+
     }
 
     //заполняю строки с actions
     for (int i = 0; i < m_actions; i++)
     {
-        QString actionName = "Критерий" + QString::number(i+1);
+        QString actionName = "Альтернатива" + QString::number(i+1);
         ui->tableWidget->setItem(13+i, 1, new QTableWidgetItem(actionName));
     }
 
@@ -124,9 +188,14 @@ void MainWindow::buildTable()
     {
         for (int j = 0; j < m_criterias; j++)
         {
-            ui->tableWidget->setItem(13+i, 2+j, new QTableWidgetItem("n/a"));
+            QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+            actionValue->setMinimum(INT_MIN);
+            actionValue->setMaximum(INT_MAX);
+            ui->tableWidget->setCellWidget(13+i, 2+j, actionValue);
+            //ui->tableWidget->setItem(13+i, 2+j, new QTableWidgetItem("n/a"));
         }
     }
+
 
 }
 void MainWindow::on_actionNew_triggered()
@@ -140,4 +209,5 @@ void MainWindow::on_actionNew_triggered()
     buildTable();
 
 }
+
 
