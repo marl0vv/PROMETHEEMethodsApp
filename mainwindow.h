@@ -15,9 +15,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void buildTable();
+    void setColumnTypeNum(int column);
+    void setColumnTypeQuality(int column);
+    void setColumnTypeMoney(int column);
 
 private slots:
     void on_actionNew_triggered();
+
+    void onComboBoxChanged(int index);
+
 
 private:
     const int m_defaultColumnCount = 2;
