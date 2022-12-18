@@ -34,11 +34,9 @@ void MainWindow::setColumnTypeNum(int column)
     for (int i = 0; i < m_actionsCount; i++)
     {
         QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
-       // comboScale->setProperty("column", QVariant(2+i));
-       // connect(comboScale, &QComboBox::currentIndexChanged, this, &MainWindow::onComboBoxChanged);
         actionValue->setProperty("row", 13+i);
         actionValue->setProperty("column", column);
-
+        connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
 
         actionValue->setMinimum(INT_MIN);
         actionValue->setMaximum(INT_MAX);
@@ -53,6 +51,10 @@ void MainWindow::setColumnTypeMoney(int column)
     for (int i = 0; i < m_actionsCount; i++)
     {
         QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+        actionValue->setProperty("row", 13+i);
+        actionValue->setProperty("column", column);
+        connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
+
         actionValue->setPrefix("₽ ");
         actionValue->setMaximum(INT_MAX);
         ui->tableWidget->setCellWidget(13+i, column, actionValue);
@@ -65,6 +67,12 @@ void MainWindow::setColumnTypeQuality(int column)
     for (int i = 0; i < m_actionsCount; i++)
     {
         QComboBox* actionValue = new QComboBox();
+        //comboScale->setProperty("column", QVariant(2+i));
+        //connect(comboScale, &QComboBox::currentIndexChanged, this, &MainWindow::onComboBoxChanged);
+        actionValue->setProperty("row", 13+i);
+        actionValue->setProperty("column", column);
+        connect(actionValue, &QComboBox::currentIndexChanged, this, &MainWindow::onCriteriaComboBoxChanged);
+
         actionValue->addItem("n/a");
         actionValue->addItem("очень плохо");
         actionValue->addItem("плохо");
@@ -93,6 +101,64 @@ void MainWindow::onComboBoxChanged(int index)
     }
 
     // qDebug() << index;
+}
+
+void MainWindow::onCriteriaSpinBoxChanged(double d)
+{
+    int row = sender()->property("row").toInt();
+    int column = sender()->property("column").toInt();
+
+    //ля, зачем я ставлю эти константы магические, но уже поздно
+    //-13 потому что первая альтернатива находится в 13 строке
+    //таким образом, нулевая альтернатива будет при row-13
+    //с -2 аналогичная история
+    m_actions[row-13].getCriteria()[column-2] = d;
+    qDebug() << "row: " << row << " column: " << column << " value: " << d;
+    for (int i = 0; i < m_actionsCount; ++i)
+    {
+        for (int j = 0; j < m_criteriasCount; ++j)
+        {
+            qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
+        }
+    }
+}
+
+void MainWindow::onCriteriaComboBoxChanged(int index)
+{
+    int row = sender()->property("row").toInt();
+    int column = sender()->property("column").toInt();
+    int value = 0;
+    switch (index)
+    {
+    case 0:
+        value = 0;
+        break;
+    case 1:
+        value = 1;
+        break;
+    case 2:
+        value = 2;
+        break;
+    case 3:
+        value = 3;
+        break;
+    case 4:
+        value = 4;
+        break;
+    case 5:
+        value = 5;
+        break;
+    }
+    m_actions[row-13].getCriteria()[column-2] = value;
+
+    qDebug() << "row: " << row << " column: " << column << " value: " << value;
+    for (int i = 0; i < m_actionsCount; ++i)
+    {
+        for (int j = 0; j < m_criteriasCount; ++j)
+        {
+            qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
+        }
+    }
 }
 void MainWindow::buildTable()
 {
@@ -201,6 +267,10 @@ void MainWindow::buildTable()
         for (int j = 0; j < m_criteriasCount; j++)
         {
             QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+            actionValue->setProperty("row", 13+i);
+            actionValue->setProperty("column", 2+j);
+            connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
+
             actionValue->setMinimum(INT_MIN);
             actionValue->setMaximum(INT_MAX);
             ui->tableWidget->setCellWidget(13+i, 2+j, actionValue);
@@ -234,7 +304,6 @@ void MainWindow::on_actionNew_triggered()
         {
             qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
         }
-
     }
 }
 

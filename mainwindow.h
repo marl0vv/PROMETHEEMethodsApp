@@ -26,7 +26,8 @@ public:
 private slots:
     void on_actionNew_triggered();
     void onComboBoxChanged(int index);
-
+    void onCriteriaSpinBoxChanged(double d);
+    void onCriteriaComboBoxChanged(int index);
 
 private:
     const int m_defaultColumnCount = 2;
