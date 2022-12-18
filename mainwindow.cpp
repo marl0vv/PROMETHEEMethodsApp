@@ -127,31 +127,12 @@ void MainWindow::onCriteriaComboBoxChanged(int index)
 {
     int row = sender()->property("row").toInt();
     int column = sender()->property("column").toInt();
-    int value = 0;
-    switch (index)
-    {
-    case 0:
-        value = 0;
-        break;
-    case 1:
-        value = 1;
-        break;
-    case 2:
-        value = 2;
-        break;
-    case 3:
-        value = 3;
-        break;
-    case 4:
-        value = 4;
-        break;
-    case 5:
-        value = 5;
-        break;
-    }
-    m_actions[row-13].getCriteria()[column-2] = value;
 
-    qDebug() << "row: " << row << " column: " << column << " value: " << value;
+
+    //значение индекса - это числовое значение качества
+    m_actions[row-13].getCriteria()[column-2] = index;
+
+    qDebug() << "row: " << row << " column: " << column << " value: " << index;
     for (int i = 0; i < m_actionsCount; ++i)
     {
         for (int j = 0; j < m_criteriasCount; ++j)
