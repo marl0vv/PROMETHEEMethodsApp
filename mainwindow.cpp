@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "newproblemdialog.h"
+#include "Actions.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -27,46 +28,64 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//Устанавливает спинбокс для получения обычных числовых значений
 void MainWindow::setColumnTypeNum(int column)
 {
-    for (int i = 0; i < m_actions; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
         QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+        actionValue->setProperty("row", 13+i);
+        actionValue->setProperty("column", column);
+        connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
+
         actionValue->setMinimum(INT_MIN);
         actionValue->setMaximum(INT_MAX);
         ui->tableWidget->setCellWidget(13+i, column, actionValue);
-
     }
 }
+//Устанавливает спинбокс для получения обычных числовых значений,
+//но содержит рублёвый префикс, для симуляции того, что содержимое - валюта
 void MainWindow::setColumnTypeMoney(int column)
 {
 
-    for (int i = 0; i < m_actions; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
         QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+        actionValue->setProperty("row", 13+i);
+        actionValue->setProperty("column", column);
+        connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
+
         actionValue->setPrefix("₽ ");
         actionValue->setMaximum(INT_MAX);
         ui->tableWidget->setCellWidget(13+i, column, actionValue);
 
     }
 }
+//Устанавливает комбобокс в котором содержатся качественные значения
 void MainWindow::setColumnTypeQuality(int column)
 {
-    for (int i = 0; i < m_actions; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
-            QComboBox* actionValue = new QComboBox();
-            actionValue->addItem("n/a");
-            actionValue->addItem("очень плохо");
-            actionValue->addItem("плохо");
-            actionValue->addItem("средне");
-            actionValue->addItem("хорошо");
-            actionValue->addItem("очень хорошо");
-            ui->tableWidget->setCellWidget(13+i, column, actionValue);
+        QComboBox* actionValue = new QComboBox();
+        //comboScale->setProperty("column", QVariant(2+i));
+        //connect(comboScale, &QComboBox::currentIndexChanged, this, &MainWindow::onComboBoxChanged);
+        actionValue->setProperty("row", 13+i);
+        actionValue->setProperty("column", column);
+        connect(actionValue, &QComboBox::currentIndexChanged, this, &MainWindow::onCriteriaComboBoxChanged);
+
+        actionValue->addItem("n/a");
+        actionValue->addItem("очень плохо");
+        actionValue->addItem("плохо");
+        actionValue->addItem("средне");
+        actionValue->addItem("хорошо");
+        actionValue->addItem("очень хорошо");
+        ui->tableWidget->setCellWidget(13+i, column, actionValue);
     }
 }
+//
 void MainWindow::onComboBoxChanged(int index)
 {
-    qDebug() << "column:" << sender()->property("column").toInt();
+    //qDebug() << "column:" << sender()->property("column").toInt();
     int column = sender()->property("column").toInt();
     if (index == 0)
     {
@@ -81,7 +100,46 @@ void MainWindow::onComboBoxChanged(int index)
         setColumnTypeQuality(column);
     }
 
-   // qDebug() << index;
+    // qDebug() << index;
+}
+
+void MainWindow::onCriteriaSpinBoxChanged(double d)
+{
+    int row = sender()->property("row").toInt();
+    int column = sender()->property("column").toInt();
+
+    //ля, зачем я ставлю эти константы магические, но уже поздно
+    //-13 потому что первая альтернатива находится в 13 строке
+    //таким образом, нулевая альтернатива будет при row-13
+    //с -2 аналогичная история
+    m_actions[row-13].getCriteria()[column-2] = d;
+    qDebug() << "row: " << row << " column: " << column << " value: " << d;
+    for (int i = 0; i < m_actionsCount; ++i)
+    {
+        for (int j = 0; j < m_criteriasCount; ++j)
+        {
+            qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
+        }
+    }
+}
+
+void MainWindow::onCriteriaComboBoxChanged(int index)
+{
+    int row = sender()->property("row").toInt();
+    int column = sender()->property("column").toInt();
+
+
+    //значение индекса - это числовое значение качества
+    m_actions[row-13].getCriteria()[column-2] = index;
+
+    qDebug() << "row: " << row << " column: " << column << " value: " << index;
+    for (int i = 0; i < m_actionsCount; ++i)
+    {
+        for (int j = 0; j < m_criteriasCount; ++j)
+        {
+            qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
+        }
+    }
 }
 void MainWindow::buildTable()
 {
@@ -89,14 +147,14 @@ void MainWindow::buildTable()
     //Создаём таблицу и заголовки
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->horizontalHeader()->setVisible(false);
-    ui->tableWidget->setColumnCount(m_criterias + m_defaultColumnCount);
-    ui->tableWidget->setRowCount(m_actions + m_defaultRowCount);
+    ui->tableWidget->setColumnCount(m_criteriasCount + m_defaultColumnCount);
+    ui->tableWidget->setRowCount(m_actionsCount + m_defaultRowCount);
 
 
     QFont font("Roboto", 8, QFont::Bold);
 
     //выделяем серым заголовок Свойств
-    for (int i = 0; i < m_criterias + m_defaultColumnCount; i++)
+    for (int i = 0; i < m_criteriasCount + m_defaultColumnCount; i++)
     {
         QTableWidgetItem* props = new QTableWidgetItem;
         props->setBackground(QColorConstants::LightGray);
@@ -108,7 +166,7 @@ void MainWindow::buildTable()
     ui->tableWidget->setItem(4, 1, optionsLabel);
 
     //выделяем серым заголовок Статистика
-    for (int i = 0; i < m_criterias + m_defaultColumnCount; i++)
+    for (int i = 0; i < m_criteriasCount + m_defaultColumnCount; i++)
     {
         QTableWidgetItem* props = new QTableWidgetItem;
         props->setBackground(QColorConstants::LightGray);
@@ -120,7 +178,7 @@ void MainWindow::buildTable()
     ui->tableWidget->setItem(7, 1, statLabel);
 
     //выделяем серым заголовок Альтернативы
-    for (int i = 0; i < m_criterias + m_defaultColumnCount; i++)
+    for (int i = 0; i < m_criteriasCount + m_defaultColumnCount; i++)
     {
         QTableWidgetItem* props = new QTableWidgetItem;
         props->setBackground(QColorConstants::LightGray);
@@ -135,15 +193,16 @@ void MainWindow::buildTable()
 
     //это очень плохо
     //setItem идёт в 2+i, потому что 2 - это имя строки
-    for (int i = 0; i < m_criterias; i++)
+    for (int i = 0; i < m_criteriasCount; i++)
     {
         QString criteriaName = "Критерий" + QString::number(i+1);
         ui->tableWidget->setItem(1, 2+i, new QTableWidgetItem(criteriaName));
 
-        //надо бы потом это delete, наверное
-        //вообще изменение этого комбобокса должно будет влиять на строку
-        //значения у actions. Скорее всего это нужно будет делать через слоты.
-        //Пока что построю остальную таблицу, там посмотрим.
+
+        //В столбцы строки "Шкала" помещаются комбобоксы.
+        //Эти комбобоксы отражают то, в какой шкале измеряется критерий, определяемый этим столбцом.
+        //Сигнал изменения индекса комбобокса отправляется в слот onComboBoxChanged
+        //Этот слот затем использует функции для изменения шкал, в которых измеряются критерии для каждой альтернативы.
         QComboBox* comboScale = new QComboBox();
         comboScale->setProperty("column", QVariant(2+i));
         connect(comboScale, &QComboBox::currentIndexChanged, this, &MainWindow::onComboBoxChanged);
@@ -177,18 +236,22 @@ void MainWindow::buildTable()
     }
 
     //заполняю строки с actions
-    for (int i = 0; i < m_actions; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
         QString actionName = "Альтернатива" + QString::number(i+1);
         ui->tableWidget->setItem(13+i, 1, new QTableWidgetItem(actionName));
     }
 
     //заполняем строки с actions и criterias
-    for (int i = 0; i < m_actions; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
-        for (int j = 0; j < m_criterias; j++)
+        for (int j = 0; j < m_criteriasCount; j++)
         {
             QDoubleSpinBox* actionValue = new QDoubleSpinBox(0);
+            actionValue->setProperty("row", 13+i);
+            actionValue->setProperty("column", 2+j);
+            connect(actionValue, &QDoubleSpinBox::valueChanged, this, &MainWindow::onCriteriaSpinBoxChanged);
+
             actionValue->setMinimum(INT_MIN);
             actionValue->setMaximum(INT_MAX);
             ui->tableWidget->setCellWidget(13+i, 2+j, actionValue);
@@ -203,11 +266,26 @@ void MainWindow::on_actionNew_triggered()
     NewProblemDialog newProblemDialog(nullptr);
     newProblemDialog.setModal(true);
     newProblemDialog.exec();
-    m_actions = newProblemDialog.getActions();
-    m_criterias = newProblemDialog.getCriterias();
+    m_actionsCount = newProblemDialog.getActions();
+    m_criteriasCount = newProblemDialog.getCriterias();
 
     buildTable();
 
+    //идёт расширение вектора альтернатив, созданного в классе mainwindow
+    //до размеров m_actionsCount и m_criteriasCount
+    m_actions.resize(m_actionsCount, Actions());
+    for(int i = 0; i < m_actions.size(); i++)
+    {
+        m_actions[i].getCriteria().resize(m_criteriasCount, 0);
+    }
+
+    for (int i = 0; i < m_actionsCount; ++i)
+    {
+        for (int j = 0; j < m_criteriasCount; ++j)
+        {
+            qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
+        }
+    }
 }
 
 
