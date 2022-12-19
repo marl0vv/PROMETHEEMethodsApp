@@ -5,7 +5,7 @@
 class Actions
 {
 public:
-    Actions();
+    Actions() = default;
     Actions(int criterias)
     {
         m_criterias.resize(criterias);
