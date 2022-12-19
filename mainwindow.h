@@ -22,6 +22,10 @@ public:
     void setColumnTypeNum(int column);
     void setColumnTypeQuality(int column);
     void setColumnTypeMoney(int column);
+    void statsFindMax();
+    void statsFindMin();
+    void statsFindAverage();
+    void statsFindDeviation();
 
 private slots:
     void on_actionNew_triggered();

@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QDebug>
+#include <cmath>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -121,6 +122,11 @@ void MainWindow::onCriteriaSpinBoxChanged(double d)
             qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
         }
     }
+
+    statsFindMax();
+    statsFindMin();
+    statsFindAverage();
+    statsFindDeviation();
 }
 
 void MainWindow::onCriteriaComboBoxChanged(int index)
@@ -139,6 +145,92 @@ void MainWindow::onCriteriaComboBoxChanged(int index)
         {
             qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
         }
+    }
+
+    statsFindMax();
+    statsFindMin();
+    statsFindAverage();
+    statsFindDeviation();
+}
+
+//функция для вывода максимального элемента по одному критерию среди всех альтернатив в блоке статистики
+//Строка не меняется, так как все данные об максимальном значении пишутся
+//в одну строку, а столбец меняется, так как у разных критериев разное максимальное значение.
+void MainWindow::statsFindMax()
+{
+    double maxElement;
+
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        maxElement = INT_MIN;
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            if (maxElement < m_actions[i].getCriteria()[j])
+            {
+                maxElement = m_actions[i].getCriteria()[j];
+
+            }
+        }
+        ui->tableWidget->setItem(9, 2+j, new QTableWidgetItem(QString::number(maxElement)));
+    }
+
+}
+
+void MainWindow::statsFindMin()
+{
+    double minElement;
+
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        minElement = INT_MAX;
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            if (minElement > m_actions[i].getCriteria()[j])
+            {
+                minElement = m_actions[i].getCriteria()[j];
+
+            }
+        }
+        ui->tableWidget->setItem(8, 2+j, new QTableWidgetItem(QString::number(minElement)));
+    }
+}
+void MainWindow::statsFindAverage()
+{
+    double average;
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        double sum = 0;
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            sum += m_actions[i].getCriteria()[j];
+        }
+        average = (double) sum / (double) m_actionsCount;
+        ui->tableWidget->setItem(10, 2+j, new QTableWidgetItem(QString::number(average, 'f', 2)));
+    }
+}
+
+void MainWindow::statsFindDeviation()
+{
+    double average;
+    double deviation;
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        int sum = 0;
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            sum += m_actions[i].getCriteria()[j];
+        }
+        average = (double) sum / (double) m_actionsCount;
+
+        //это просто отвратительное название. Здесь я имел в виду сумму квадратов разностей отдельного значения выборки и
+        //среднего арифметического выборки
+        double sumOfPowsOfDiff = 0;
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            sumOfPowsOfDiff += std::pow((m_actions[i].getCriteria()[j] - average), 2);
+        }
+        deviation = std::sqrt(sumOfPowsOfDiff/m_actionsCount);
+        ui->tableWidget->setItem(11, 2+j, new QTableWidgetItem(QString::number(deviation, 'f', 2)));
     }
 }
 void MainWindow::buildTable()
