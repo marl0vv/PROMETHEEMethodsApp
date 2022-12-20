@@ -67,12 +67,18 @@
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
+        <property name="minimum">
+         <number>2</number>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxCriterias">
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum">
+         <number>1</number>
         </property>
        </widget>
       </item>
