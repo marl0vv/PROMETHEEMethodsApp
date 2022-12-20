@@ -371,13 +371,21 @@ void MainWindow::on_actionNew_triggered()
         m_actions[i].getCriteria().resize(m_criteriasCount, 0);
     }
 
+
+    //в этом кусочке вектора объекта m_actions заполняются нулями,
+    //так как логично, что при создании новой таблицы они должны быть равны нулям
+    //Если ты до этого создавал таблицу, а потом делал ещё одну, то значения от старой таблицы оставались.
+    qDebug() << "Creating new table ";
     for (int i = 0; i < m_actionsCount; ++i)
     {
+        std::fill(m_actions[i].getCriteria().begin(), m_actions[i].getCriteria().end(), 0);
         for (int j = 0; j < m_criteriasCount; ++j)
         {
             qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
         }
     }
+
+
 }
 
 
