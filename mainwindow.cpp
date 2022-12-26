@@ -233,6 +233,25 @@ void MainWindow::statsFindDeviation()
         ui->tableWidget->setItem(11, 2+j, new QTableWidgetItem(QString::number(deviation, 'f', 2)));
     }
 }
+
+void MainWindow::onMinOrMaxComboBoxChanged(int index)
+{
+    m_criteriasMinMax.resize(m_criteriasCount);
+    int column = sender()->property("column").toInt();
+
+    if (index == 0)
+    {
+        m_criteriasMinMax[column-2] = -1;
+    }
+    if (index == 1)
+    {
+        m_criteriasMinMax[column-2] = 1;
+    }
+    for (int i = 0; i < m_criteriasCount; i++)
+    {
+        qDebug() << "Criteria  " << i+1  << "Min or Max: " << m_criteriasMinMax[i];
+    }
+}
 void MainWindow::buildTable()
 {
 
@@ -311,9 +330,11 @@ void MainWindow::buildTable()
         //Ещё хотелось бы, чтобы минимальное и максимальное значения у actions
         //подчёркивалось красным и зелёным
         QComboBox* minOrMax = new QComboBox();
+        minOrMax->setProperty("column", QVariant(2+i));
+        connect(minOrMax, &QComboBox::currentIndexChanged, this, &MainWindow::onMinOrMaxComboBoxChanged);
         ui->tableWidget->setCellWidget(5, 2+i, minOrMax);
-        minOrMax->addItem("Максимум");
         minOrMax->addItem("Минимум");
+        minOrMax->addItem("Максимум");
 
 
         //вес
@@ -388,4 +409,86 @@ void MainWindow::on_actionNew_triggered()
 
 }
 
+void MainWindow::PrometheeMethod()
+{
+
+    for(int k = 0; k < m_actionsCount; k++)
+    {
+        m_actions[k].getDifferTable().resize(m_actionsCount);
+        for(int i = 0; i < m_actionsCount; i++)
+        {
+            m_actions[k].getDifferTable()[i].resize(m_criteriasCount, 0);
+        }
+    }
+
+    //создаём таблицу разностей.
+    //Для каждой альтернативы отнимаем от критериев текущей альтернативы критерии всех остальных альтернатив
+    qDebug() << "Difference Table: ";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            if (k == i)
+            {
+                continue;
+            }
+            for (int j = 0; j < m_criteriasCount; j++)
+            {
+                m_actions[k].getDifferTable()[i][j] = (m_actions[k].getCriteria()[j] - m_actions[i].getCriteria()[j]) * m_criteriasMinMax[j];
+                qDebug() << "Action" << k+1 << m_actions[k].getDifferTable()[i][j];
+            }
+        }
+    }
+
+
+    for(int i = 0; i < m_actionsCount; i++)
+    {
+        m_actions[i].getPreferenceIndicies().resize(m_actionsCount);
+    }
+
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        buildPositivePreferenceIndicies(k);
+        int shift = 0;
+        for (int z = 0; z < m_actionsCount; z++)
+        {
+            if (k == z)
+            {
+                continue;
+            }
+            for (int i = 0; i < m_actionsCount - 1; i++)
+            {
+                for (int j = 0; j < m_criteriasCount; j++)
+                {
+
+
+                }
+            }
+            shift++;
+        }
+    }
+}
+
+void MainWindow::buildPositivePreferenceIndicies(int k)
+{
+    for (int i = 0; i < m_actionsCount -1; i++)
+    {
+        for (int j = 0; j < m_criteriasCount; j++)
+        {
+            if (m_actions[k].getDifferTable()[i][j] < 0)
+            {
+                continue;
+            }
+            if (m_actions[k].getDifferTable()[i][j] > 0)
+            {
+                m_actions[k].getPreferenceIndicies()[i] += 1 * m_criteriasWeight[j];
+            }
+        }
+    }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    PrometheeMethod();
+}
 
