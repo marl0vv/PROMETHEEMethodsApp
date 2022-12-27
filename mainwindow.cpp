@@ -412,18 +412,8 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::PrometheeMethod()
 {
 
-    for(int k = 0; k < m_actionsCount; k++)
-    {
-        m_actions[k].getDifferTable().resize(m_actionsCount);
-        for(int i = 0; i < m_actionsCount; i++)
-        {
-            m_actions[k].getDifferTable()[i].resize(m_criteriasCount, 0);
-        }
-    }
-
     //создаём таблицу разностей.
     //Для каждой альтернативы отнимаем от критериев текущей альтернативы критерии всех остальных альтернатив
-    qDebug() << "Difference Table: ";
     for (int k = 0; k < m_actionsCount; k++)
     {
         for (int i = 0; i < m_actionsCount; i++)
@@ -432,16 +422,28 @@ void MainWindow::PrometheeMethod()
             {
                 continue;
             }
+
             for (int j = 0; j < m_criteriasCount; j++)
             {
-                m_actions[k].getDifferTable()[i][j] = (m_actions[k].getCriteria()[j] - m_actions[i].getCriteria()[j]) * m_criteriasMinMax[j];
-                qDebug() << "Action" << k+1 << m_actions[k].getDifferTable()[i][j];
+                //i+1, так как я хочу, чтобы счёт матриц вёлся от единицы
+                m_actions[k].getDifferTable()[i+1].push_back((m_actions[k].getCriteria()[j] - m_actions[i].getCriteria()[j]) * m_criteriasMinMax[j]);
             }
         }
     }
 
+    //Кусок для проверки корректности заполнения таблицы разностей
+    qDebug() << "Difference Table: ";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+                qDebug() << "Upper action : " << k+1 << "Action in matrix:" << i+1 << m_actions[k].getDifferTable()[i+1];
 
-    for(int i = 0; i < m_actionsCount; i++)
+        }
+    }
+
+
+        for(int i = 0; i < m_actionsCount; i++)
     {
         m_actions[i].getPreferenceIndicies().resize(m_actionsCount);
     }
@@ -449,7 +451,7 @@ void MainWindow::PrometheeMethod()
     for (int k = 0; k < m_actionsCount; k++)
     {
         buildPositivePreferenceIndicies(k);
-        int shift = 0;
+        /*int shift = 0;
         for (int z = 0; z < m_actionsCount; z++)
         {
             if (k == z)
@@ -465,7 +467,7 @@ void MainWindow::PrometheeMethod()
                 }
             }
             shift++;
-        }
+        }*/
     }
 }
 
@@ -483,6 +485,16 @@ void MainWindow::buildPositivePreferenceIndicies(int k)
             {
                 m_actions[k].getPreferenceIndicies()[i] += 1 * m_criteriasWeight[j];
             }
+        }
+    }
+
+    //кусок для проверки корректности заполнения preferenceIndicies
+    qDebug() << "Positive Preference Indicies:";
+    for (int i = 0; i < m_actionsCount -1; i++)
+    {
+        for (int j = 0; j < m_criteriasCount; j++)
+        {
+           qDebug() << "Upper action: " << "action in matrix: " << m_actions[k].getPreferenceIndicies();
         }
     }
 }

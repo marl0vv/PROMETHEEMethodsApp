@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 
 class Actions
 {
@@ -11,11 +12,12 @@ public:
         m_criterias.resize(criterias);
     }
     std::vector<double> &getCriteria() {return m_criterias;}
-    std::vector<std::vector<double>> &getDifferTable() {return differTable;}
+    std::unordered_map<size_t, std::vector<double>> &getDifferTable() {return differTable;}
     std::vector<double> &getPreferenceIndicies() {return m_preferenceIndices;}
 private:
     std::vector<double> m_criterias;
-    std::vector<std::vector<double>> differTable;
+    //std::vector<std::vector<double>> differTable;
+    std::unordered_map<size_t, std::vector<double>> differTable;
     std::vector<double> m_preferenceIndices;
     double phiPositive;
     double phiNegative;
