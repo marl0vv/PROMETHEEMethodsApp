@@ -257,7 +257,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>18</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -268,12 +268,25 @@
     <addaction name="separator"/>
     <addaction name="actionNew"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Рисование</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_2"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew">
    <property name="text">
     <string>Создать новый...</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Рисовать</string>
    </property>
   </action>
  </widget>

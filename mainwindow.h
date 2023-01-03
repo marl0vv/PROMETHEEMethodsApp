@@ -33,6 +33,8 @@ private slots:
     void onCriteriaSpinBoxChanged(double d);
     void onCriteriaComboBoxChanged(int index);
 
+    void on_action_2_triggered();
+
 private:
     const int m_defaultColumnCount = 2;
     const int m_defaultRowCount = 13;

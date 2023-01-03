@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "drawing.h"
 #include "newproblemdialog.h"
 #include "Actions.h"
 
@@ -388,4 +389,11 @@ void MainWindow::on_actionNew_triggered()
 
 }
 
+
+
+void MainWindow::on_action_2_triggered()
+{
+    drawing *Drawing = new drawing(nullptr);
+    Drawing->show();
+}
 
