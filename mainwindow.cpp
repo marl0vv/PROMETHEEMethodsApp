@@ -406,12 +406,18 @@ void MainWindow::on_actionNew_triggered()
         }
     }
 
+    //ВНИМАНИЕ! кусок для заполнения весов единицами. Удалить, когда появится функция для присвоения веса из таблицы
+    //На текущий момент это просто заглушка.
+    m_criteriasWeight.resize(m_criteriasCount);
+    for (int i = 0; i < m_criteriasCount; i++)
+    {
+        m_criteriasWeight[i] = 1;
+    }
 
 }
 
 void MainWindow::PrometheeMethod()
 {
-
     //создаём таблицу разностей.
     //Для каждой альтернативы отнимаем от критериев текущей альтернативы критерии всех остальных альтернатив
     for (int k = 0; k < m_actionsCount; k++)
@@ -437,68 +443,110 @@ void MainWindow::PrometheeMethod()
     {
         for (int i = 0; i < m_actionsCount; i++)
         {
-                qDebug() << "Upper action : " << k+1 << "Action in matrix:" << i+1 << m_actions[k].getDifferTable()[i+1];
+            qDebug() << "Upper action : " << k+1 << "Action in matrix:" << i+1 << m_actions[k].getDifferTable()[i+1];
 
         }
     }
 
 
-        for(int i = 0; i < m_actionsCount; i++)
+    //Увеличиваем размер векторов под количество альтернатив. Возможно, это стоит перенести в блок
+    //создания таблицы
+    for(int i = 0; i < m_actionsCount; i++)
     {
-        m_actions[i].getPreferenceIndicies().resize(m_actionsCount);
+        m_actions[i].getPositivePreferenceIndicies().resize(m_actionsCount);
+        m_actions[i].getNegativePreferenceIndicies().resize(m_actionsCount);
     }
 
+
+    //ВНИМАНИЕ! В целях тестирования разделил на два разных цикла. Затем можно засунуть в один
+    qDebug() << "Positive Preference Indicies:";
     for (int k = 0; k < m_actionsCount; k++)
     {
         buildPositivePreferenceIndicies(k);
-        /*int shift = 0;
-        for (int z = 0; z < m_actionsCount; z++)
-        {
-            if (k == z)
-            {
-                continue;
-            }
-            for (int i = 0; i < m_actionsCount - 1; i++)
-            {
-                for (int j = 0; j < m_criteriasCount; j++)
-                {
-
-
-                }
-            }
-            shift++;
-        }*/
     }
+    qDebug() << "Negative Preference Indicies:";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        buildNegativePreferenceIndicies(k);
+    }
+
+    //далее идёт подсчёт phi для каждой альтернативы
+    double sumPositivePreferenceIndicies = 0;
+    double sumNegativePreferenceIndicies = 0;
+    for (int i = 0; i < m_actionsCount; i++)
+    {
+        for (int j = 0; j < m_actionsCount; j++)
+        {
+             sumPositivePreferenceIndicies += m_actions[i].getPositivePreferenceIndicies()[j];
+             sumNegativePreferenceIndicies += m_actions[i].getNegativePreferenceIndicies()[j];
+        }
+        m_actions[i].getPhiPositive() = sumPositivePreferenceIndicies/(m_actionsCount-1);
+        m_actions[i].getPhiNegative() = sumNegativePreferenceIndicies/(m_actionsCount -1);
+        m_actions[i].getPhi() = m_actions[i].getPhiPositive() - m_actions[i].getPhiNegative();
+
+        qDebug() << "Action" << i+1 << "Phi Positive" << m_actions[i].getPhiPositive();
+        qDebug() << "Action" << i+1 << "Phi Negative" << m_actions[i].getPhiNegative();
+        qDebug() << "Action" << i+1 << "Phi " << m_actions[i].getPhi();
+    }
+
 }
 
 void MainWindow::buildPositivePreferenceIndicies(int k)
 {
-    for (int i = 0; i < m_actionsCount -1; i++)
+    for (int i = 0; i < m_actionsCount; i++)
     {
         for (int j = 0; j < m_criteriasCount; j++)
         {
-            if (m_actions[k].getDifferTable()[i][j] < 0)
+            if (m_actions[k].getDifferTable()[i+1].empty())
             {
                 continue;
             }
-            if (m_actions[k].getDifferTable()[i][j] > 0)
+            if (m_actions[k].getDifferTable()[i+1][j] <= 0)
             {
-                m_actions[k].getPreferenceIndicies()[i] += 1 * m_criteriasWeight[j];
+                continue;
+            }
+            if (m_actions[k].getDifferTable()[i+1][j] > 0)
+            {
+                m_actions[k].getPositivePreferenceIndicies()[i] += 1 * m_criteriasWeight[j];
             }
         }
     }
 
-    //кусок для проверки корректности заполнения preferenceIndicies
-    qDebug() << "Positive Preference Indicies:";
-    for (int i = 0; i < m_actionsCount -1; i++)
-    {
-        for (int j = 0; j < m_criteriasCount; j++)
-        {
-           qDebug() << "Upper action: " << "action in matrix: " << m_actions[k].getPreferenceIndicies();
-        }
-    }
+    //строка для проверки корректности заполнения preferenceIndicies
+    qDebug() << "Upper action: " << k+1 << m_actions[k].getPositivePreferenceIndicies();
 }
 
+//это ёбаный ужас, сейчас я пойду передохну, а потом подробно опишу, что здесь
+void MainWindow::buildNegativePreferenceIndicies(int k)
+{
+    for (int z = 0; z < m_actionsCount; z++)
+    {
+        if (k == z)
+        {
+            continue;
+        }
+
+            for (int j = 0; j < m_criteriasCount; j++)
+            {
+                if (m_actions[z].getDifferTable()[k+1].empty())
+                {
+                    continue;
+                }
+                if (m_actions[z].getDifferTable()[k+1][j] <= 0)
+                {
+                    continue;
+                }
+
+                if (m_actions[z].getDifferTable()[k+1][j] > 0)
+                {
+                    m_actions[k].getNegativePreferenceIndicies()[z] += 1 * m_criteriasWeight[j];
+                }
+            }
+    }
+
+    //строка для проверки корректности заполнения preferenceIndicies
+    qDebug() << "Upper action: " << k+1 << m_actions[k].getNegativePreferenceIndicies();
+}
 void MainWindow::on_pushButton_clicked()
 {
     PrometheeMethod();

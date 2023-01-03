@@ -27,6 +27,7 @@ public:
     void statsFindAverage();
     void statsFindDeviation();
     void buildPositivePreferenceIndicies(int k);
+    void buildNegativePreferenceIndicies(int k);
 
     void PrometheeMethod();
 
