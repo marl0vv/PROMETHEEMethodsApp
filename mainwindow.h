@@ -26,12 +26,19 @@ public:
     void statsFindMin();
     void statsFindAverage();
     void statsFindDeviation();
+    void buildPositivePreferenceIndicies(int k);
+    void buildNegativePreferenceIndicies(int k);
+
+    void PrometheeMethod();
 
 private slots:
     void on_actionNew_triggered();
     void onComboBoxChanged(int index);
     void onCriteriaSpinBoxChanged(double d);
     void onCriteriaComboBoxChanged(int index);
+    void onMinOrMaxComboBoxChanged(int index);
+
+    void on_pushButton_clicked();
 
 private:
     const int m_defaultColumnCount = 2;
@@ -40,5 +47,8 @@ private:
     int m_actionsCount;
     int m_criteriasCount;
     std::vector<Actions> m_actions;
+    std::vector<double> m_criteriasWeight;
+    std::vector<int> m_criteriasMinMax;
+
 };
 #endif // MAINWINDOW_H

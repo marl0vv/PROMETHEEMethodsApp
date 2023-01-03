@@ -233,6 +233,25 @@ void MainWindow::statsFindDeviation()
         ui->tableWidget->setItem(11, 2+j, new QTableWidgetItem(QString::number(deviation, 'f', 2)));
     }
 }
+
+void MainWindow::onMinOrMaxComboBoxChanged(int index)
+{
+    m_criteriasMinMax.resize(m_criteriasCount);
+    int column = sender()->property("column").toInt();
+
+    if (index == 0)
+    {
+        m_criteriasMinMax[column-2] = -1;
+    }
+    if (index == 1)
+    {
+        m_criteriasMinMax[column-2] = 1;
+    }
+    for (int i = 0; i < m_criteriasCount; i++)
+    {
+        qDebug() << "Criteria  " << i+1  << "Min or Max: " << m_criteriasMinMax[i];
+    }
+}
 void MainWindow::buildTable()
 {
 
@@ -311,9 +330,11 @@ void MainWindow::buildTable()
         //Ещё хотелось бы, чтобы минимальное и максимальное значения у actions
         //подчёркивалось красным и зелёным
         QComboBox* minOrMax = new QComboBox();
+        minOrMax->setProperty("column", QVariant(2+i));
+        connect(minOrMax, &QComboBox::currentIndexChanged, this, &MainWindow::onMinOrMaxComboBoxChanged);
         ui->tableWidget->setCellWidget(5, 2+i, minOrMax);
-        minOrMax->addItem("Максимум");
         minOrMax->addItem("Минимум");
+        minOrMax->addItem("Максимум");
 
 
         //вес
@@ -385,7 +406,149 @@ void MainWindow::on_actionNew_triggered()
         }
     }
 
+    //ВНИМАНИЕ! кусок для заполнения весов единицами. Удалить, когда появится функция для присвоения веса из таблицы
+    //На текущий момент это просто заглушка.
+    m_criteriasWeight.resize(m_criteriasCount);
+    for (int i = 0; i < m_criteriasCount; i++)
+    {
+        m_criteriasWeight[i] = 1;
+    }
 
 }
 
+void MainWindow::PrometheeMethod()
+{
+    //создаём таблицу разностей.
+    //Для каждой альтернативы отнимаем от критериев текущей альтернативы критерии всех остальных альтернатив
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            if (k == i)
+            {
+                continue;
+            }
+
+            for (int j = 0; j < m_criteriasCount; j++)
+            {
+                //i+1, так как я хочу, чтобы счёт матриц вёлся от единицы
+                m_actions[k].getDifferTable()[i+1].push_back((m_actions[k].getCriteria()[j] - m_actions[i].getCriteria()[j]) * m_criteriasMinMax[j]);
+            }
+        }
+    }
+
+    //Кусок для проверки корректности заполнения таблицы разностей
+    qDebug() << "Difference Table: ";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        for (int i = 0; i < m_actionsCount; i++)
+        {
+            qDebug() << "Upper action : " << k+1 << "Action in matrix:" << i+1 << m_actions[k].getDifferTable()[i+1];
+
+        }
+    }
+
+
+    //Увеличиваем размер векторов под количество альтернатив. Возможно, это стоит перенести в блок
+    //создания таблицы
+    for(int i = 0; i < m_actionsCount; i++)
+    {
+        m_actions[i].getPositivePreferenceIndicies().resize(m_actionsCount);
+        m_actions[i].getNegativePreferenceIndicies().resize(m_actionsCount);
+    }
+
+
+    //ВНИМАНИЕ! В целях тестирования разделил на два разных цикла. Затем можно засунуть в один
+    qDebug() << "Positive Preference Indicies:";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        buildPositivePreferenceIndicies(k);
+    }
+    qDebug() << "Negative Preference Indicies:";
+    for (int k = 0; k < m_actionsCount; k++)
+    {
+        buildNegativePreferenceIndicies(k);
+    }
+
+    //далее идёт подсчёт phi для каждой альтернативы
+    double sumPositivePreferenceIndicies = 0;
+    double sumNegativePreferenceIndicies = 0;
+    for (int i = 0; i < m_actionsCount; i++)
+    {
+        for (int j = 0; j < m_actionsCount; j++)
+        {
+             sumPositivePreferenceIndicies += m_actions[i].getPositivePreferenceIndicies()[j];
+             sumNegativePreferenceIndicies += m_actions[i].getNegativePreferenceIndicies()[j];
+        }
+        m_actions[i].getPhiPositive() = sumPositivePreferenceIndicies/(m_actionsCount-1);
+        m_actions[i].getPhiNegative() = sumNegativePreferenceIndicies/(m_actionsCount -1);
+        m_actions[i].getPhi() = m_actions[i].getPhiPositive() - m_actions[i].getPhiNegative();
+
+        qDebug() << "Action" << i+1 << "Phi Positive" << m_actions[i].getPhiPositive();
+        qDebug() << "Action" << i+1 << "Phi Negative" << m_actions[i].getPhiNegative();
+        qDebug() << "Action" << i+1 << "Phi " << m_actions[i].getPhi();
+    }
+
+}
+
+void MainWindow::buildPositivePreferenceIndicies(int k)
+{
+    for (int i = 0; i < m_actionsCount; i++)
+    {
+        for (int j = 0; j < m_criteriasCount; j++)
+        {
+            if (m_actions[k].getDifferTable()[i+1].empty())
+            {
+                continue;
+            }
+            if (m_actions[k].getDifferTable()[i+1][j] <= 0)
+            {
+                continue;
+            }
+            if (m_actions[k].getDifferTable()[i+1][j] > 0)
+            {
+                m_actions[k].getPositivePreferenceIndicies()[i] += 1 * m_criteriasWeight[j];
+            }
+        }
+    }
+
+    //строка для проверки корректности заполнения preferenceIndicies
+    qDebug() << "Upper action: " << k+1 << m_actions[k].getPositivePreferenceIndicies();
+}
+
+//это ёбаный ужас, сейчас я пойду передохну, а потом подробно опишу, что здесь
+void MainWindow::buildNegativePreferenceIndicies(int k)
+{
+    for (int z = 0; z < m_actionsCount; z++)
+    {
+        if (k == z)
+        {
+            continue;
+        }
+
+            for (int j = 0; j < m_criteriasCount; j++)
+            {
+                if (m_actions[z].getDifferTable()[k+1].empty())
+                {
+                    continue;
+                }
+                if (m_actions[z].getDifferTable()[k+1][j] <= 0)
+                {
+                    continue;
+                }
+
+                if (m_actions[z].getDifferTable()[k+1][j] > 0)
+                {
+                    m_actions[k].getNegativePreferenceIndicies()[z] += 1 * m_criteriasWeight[j];
+                }
+            }
+    }
+
+    //строка для проверки корректности заполнения preferenceIndicies
+    qDebug() << "Upper action: " << k+1 << m_actions[k].getNegativePreferenceIndicies();
+}
+void MainWindow::on_pushButton_clicked()
+{
+    PrometheeMethod();
+}
 
