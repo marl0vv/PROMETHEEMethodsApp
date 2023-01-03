@@ -16,8 +16,8 @@ public:
     ~Drawing();
 private:
     Ui::Drawing *ui;
-    std::vector<Actions> drawingAlternatives; //все альтернативы
-    int drawingAlternativesAmount; //кол-во альтернатив
+    std::vector<Actions> m_drawingAlternatives; //все альтернативы
+    int m_drawingAlternativesAmount; //кол-во альтернатив
 };
 
 #endif // DRAWING_H
