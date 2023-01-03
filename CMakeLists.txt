@@ -21,7 +21,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
         newproblemdialog.h newproblemdialog.cpp newproblemdialog.ui
         Actions.h Actions.cpp
-        drawing.h drawing.cpp drawing.ui
+        Drawing.h Drawing.cpp drawing.ui
 
 )
 

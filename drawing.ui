@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>drawing</class>
- <widget class="QWidget" name="drawing">
+ <class>Drawing</class>
+ <widget class="QWidget" name="Drawing">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>835</height>
+    <width>827</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PROMETHEE Rankings</string>
+   <string>Form</string>
   </property>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>10</y>
      <width>811</width>
      <height>811</height>
     </rect>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>1000</width>
-     <height>1000</height>
-    </size>
    </property>
    <property name="sceneRect">
     <rectf>

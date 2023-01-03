@@ -1,16 +1,17 @@
-#include "drawing.h"
+#include "Drawing.h"
 #include "ui_drawing.h"
 #include <QGraphicsTextItem>
 #include <QStandardItem>
+#include <mainwindow.h>
 
 
 
-
-
-drawing::drawing(QWidget *parent) :
+Drawing::Drawing(QWidget *parent,std::vector<Actions> a,int n) :
     QWidget(parent),
-    ui(new Ui::drawing)
+    ui(new Ui::Drawing)
 {
+    drawingAlternatives = a;
+    drawingAlternativesAmount = n;
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     QGraphicsScene * scene = new QGraphicsScene;
@@ -18,6 +19,9 @@ drawing::drawing(QWidget *parent) :
     QBrush dredbrush(Qt::darkRed);
     QPen blackpen(Qt::black);
     blackpen.setWidth(2);
+    QPen yellowpen(Qt::yellow);
+    yellowpen.setWidth(3);
+    //рисование прямоугольников - значений Phi для построения графиков
     QRectF greenLeft,redLeft,greenRight,redRight,redMid,greenMid;
 
     greenLeft.setCoords(100,100,120,400);
@@ -37,7 +41,8 @@ drawing::drawing(QWidget *parent) :
     scene->addRect(redMid,blackpen,dredbrush);
 
     QFont font=QFont("Arial", 10, QFont::Bold);
-    QString str = "0.0";
+
+    QString str = "0.0"; //добавляем 0.0 возле левого и правого прямоугольников
 
     QGraphicsTextItem* item01 = new QGraphicsTextItem();
     item01->setDefaultTextColor(QColorConstants::Black);
@@ -53,7 +58,7 @@ drawing::drawing(QWidget *parent) :
     item02->setPos(710,85);
     scene->addItem(item02);
 
-    str = "1.0";
+    str = "1.0"; //добавляем 1.0 возле левого и правого прямоугольников
 
     QGraphicsTextItem* item11 = new QGraphicsTextItem();
     item11->setDefaultTextColor(QColorConstants::Black);
@@ -68,7 +73,7 @@ drawing::drawing(QWidget *parent) :
     item12->setPos(710,690);
     scene->addItem(item12);
 
-    str = "Phi+";
+    str = "Phi+"; //добавляем Phi+ возле левого прямоугольника
     QGraphicsTextItem* PhiPlus = new QGraphicsTextItem();
     PhiPlus->setDefaultTextColor(QColorConstants::Black);
     PhiPlus->setFont(font);
@@ -76,7 +81,7 @@ drawing::drawing(QWidget *parent) :
     PhiPlus->setPos(55,390);
     scene->addItem(PhiPlus);
 
-    str = "Phi-";
+    str = "Phi-"; //добавляем Phi- возле правого прямоугольника
     QGraphicsTextItem* PhiMinus = new QGraphicsTextItem();
     PhiMinus->setDefaultTextColor(QColorConstants::Black);
     PhiMinus->setFont(font);
@@ -84,12 +89,26 @@ drawing::drawing(QWidget *parent) :
     PhiMinus->setPos(710,390);
     scene->addItem(PhiMinus);
 
+
+    double php[drawingAlternativesAmount];
+    double phn[drawingAlternativesAmount];
+    for (int i=0; i<drawingAlternativesAmount;i++){
+        php[i]=drawingAlternatives[i].getPhiPositive();
+        phn[i]=1-drawingAlternatives[i].getPhiNegative();
+    }
+    for (int i=0; i<drawingAlternativesAmount;i++){
+        scene->addLine(120,700-600*php[i],680,700-600*phn[i],yellowpen); //рисуем /
+        scene->addLine(100,700-600*php[i],120,700-600*php[i],yellowpen); //рисуем _ слева
+        scene->addLine(680,700-600*phn[i],700,700-600*phn[i],yellowpen); //рисуем _ справа
+    }
+
     ui->graphicsView->setScene(scene);
+
+
 }
 
-drawing::~drawing()
+Drawing::~Drawing()
 {
     delete ui;
 }
-
 

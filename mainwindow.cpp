@@ -579,7 +579,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_action_2_triggered()
 {
-    drawing *Drawing = new drawing(nullptr);
-    Drawing->show();
+    Drawing *drawing = new Drawing(nullptr,m_actions,m_actionsCount);
+    drawing->show();
 }
 
