@@ -236,7 +236,7 @@ void MainWindow::statsFindDeviation()
 
 void MainWindow::onMinOrMaxComboBoxChanged(int index)
 {
-    m_criteriasMinMax.resize(m_criteriasCount);
+
     int column = sender()->property("column").toInt();
 
     if (index == 0)
@@ -251,6 +251,22 @@ void MainWindow::onMinOrMaxComboBoxChanged(int index)
     {
         qDebug() << "Criteria  " << i+1  << "Min or Max: " << m_criteriasMinMax[i];
     }
+}
+
+void MainWindow::onWeightComboBoxChanged(double d)
+{
+    int column = sender()->property("column").toInt();
+    int sum = 0;
+    m_criteriasTableWeight[column-2] = d;
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        sum += m_criteriasTableWeight[j];
+    }
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        m_criteriasWeight[j] = m_criteriasTableWeight[j] / sum;
+    }
+
 }
 void MainWindow::buildTable()
 {
@@ -338,7 +354,10 @@ void MainWindow::buildTable()
 
 
         //вес
-        ui->tableWidget->setItem(6, 2+i, new QTableWidgetItem(QString::number(1)));
+        QDoubleSpinBox* comboWeight = new QDoubleSpinBox();
+        comboWeight->setProperty("column", QVariant(2+i));
+        connect(comboWeight, &QDoubleSpinBox::valueChanged, this, &MainWindow::onWeightComboBoxChanged);
+        ui->tableWidget->setCellWidget(6, 2+i, comboWeight);
 
 
         ui->tableWidget->setItem(8, 2+i, new QTableWidgetItem("n/a"));
@@ -381,6 +400,9 @@ void MainWindow::on_actionNew_triggered()
     newProblemDialog.exec();
     m_actionsCount = newProblemDialog.getActions();
     m_criteriasCount = newProblemDialog.getCriterias();
+    m_criteriasMinMax.resize(m_criteriasCount);
+    m_criteriasWeight.resize(m_criteriasCount);
+    m_criteriasTableWeight.resize(m_criteriasCount);
 
     buildTable();
 
@@ -408,7 +430,7 @@ void MainWindow::on_actionNew_triggered()
 
     //ВНИМАНИЕ! кусок для заполнения весов единицами. Удалить, когда появится функция для присвоения веса из таблицы
     //На текущий момент это просто заглушка.
-    m_criteriasWeight.resize(m_criteriasCount);
+
     for (int i = 0; i < m_criteriasCount; i++)
     {
         m_criteriasWeight[i] = 1;
@@ -471,10 +493,11 @@ void MainWindow::PrometheeMethod()
     }
 
     //далее идёт подсчёт phi для каждой альтернативы
-    double sumPositivePreferenceIndicies = 0;
-    double sumNegativePreferenceIndicies = 0;
+
     for (int i = 0; i < m_actionsCount; i++)
     {
+        double sumPositivePreferenceIndicies = 0;
+        double sumNegativePreferenceIndicies = 0;
         for (int j = 0; j < m_actionsCount; j++)
         {
              sumPositivePreferenceIndicies += m_actions[i].getPositivePreferenceIndicies()[j];
