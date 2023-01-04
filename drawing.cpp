@@ -96,7 +96,9 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> a,int n) :
     {
         phiPositiveArray[i]=m_drawingAlternatives[i].getPhiPositive();
         // вычитаем значение для корректного построения,
-        // поскольку значения справа для Phi- идут от 0 до 1, и Phi не может быть больше 1
+        // поскольку значения справа для Phi- идут от 0 до 1 сверху вниз,
+        // и Phi не может быть больше 1, вычитаем Phi-
+        // из единицы для получения противоположного значения
         phiNegativeArray[i]=1-m_drawingAlternatives[i].getPhiNegative();
     }
     for (int i=0; i<m_drawingAlternativesAmount;i++){
