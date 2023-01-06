@@ -6,19 +6,22 @@
 
 
 
-Drawing::Drawing(QWidget *parent,std::vector<Actions> a,int n) :
+Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     QWidget(parent),
     ui(new Ui::Drawing)
 {
-    m_drawingAlternatives = a;
-    m_drawingAlternativesAmount = n;
+    m_drawingAlternatives = actions;
+    m_drawingAlternativesAmount = count;
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     QGraphicsScene * scene = new QGraphicsScene;
+    // Кисти для заливки прямоугольников, отражающих значения phi
     QBrush darkGreenBrush(Qt::darkGreen);
     QBrush darkRedBrush(Qt::darkRed);
+    // Перо для границ прямоугольников, отражающих значения phi
     QPen blackPen(Qt::black);
     blackPen.setWidth(2);
+    //Перо для рисования графиков альтернатив
     QPen yellowPen(Qt::yellow);
     yellowPen.setWidth(3);
     //рисование прямоугольников - значений Phi для построения графиков
