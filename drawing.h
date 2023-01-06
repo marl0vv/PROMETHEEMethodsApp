@@ -2,24 +2,22 @@
 #define DRAWING_H
 
 #include <QWidget>
-
+#include <mainwindow.h>
 namespace Ui {
-class drawing;
+class Drawing;
 }
 
-class drawing : public QWidget
+class Drawing : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit drawing(QWidget *parent = nullptr);
-    ~drawing();
-
-private slots:
-    void on_pushButton_clicked();
-
+    explicit Drawing(QWidget *parent,std::vector<Actions> a,int n);
+    ~Drawing();
 private:
-    Ui::drawing *ui;
+    Ui::Drawing *ui;
+    std::vector<Actions> m_drawingAlternatives; //все альтернативы
+    int m_drawingAlternativesAmount; //кол-во альтернатив
 };
 
 #endif // DRAWING_H

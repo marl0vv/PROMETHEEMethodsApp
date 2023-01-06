@@ -1,23 +1,27 @@
-#include "drawing.h"
+#include "Drawing.h"
 #include "ui_drawing.h"
 #include <QGraphicsTextItem>
 #include <QStandardItem>
+#include <mainwindow.h>
 
 
 
-
-
-drawing::drawing(QWidget *parent) :
+Drawing::Drawing(QWidget *parent,std::vector<Actions> a,int n) :
     QWidget(parent),
-    ui(new Ui::drawing)
+    ui(new Ui::Drawing)
 {
+    m_drawingAlternatives = a;
+    m_drawingAlternativesAmount = n;
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     QGraphicsScene * scene = new QGraphicsScene;
-    QBrush dgreenbrush(Qt::darkGreen);
-    QBrush dredbrush(Qt::darkRed);
-    QPen blackpen(Qt::black);
-    blackpen.setWidth(2);
+    QBrush darkGreenBrush(Qt::darkGreen);
+    QBrush darkRedBrush(Qt::darkRed);
+    QPen blackPen(Qt::black);
+    blackPen.setWidth(2);
+    QPen yellowPen(Qt::yellow);
+    yellowPen.setWidth(3);
+    //рисование прямоугольников - значений Phi для построения графиков
     QRectF greenLeft,redLeft,greenRight,redRight,redMid,greenMid;
 
     greenLeft.setCoords(100,100,120,400);
@@ -28,68 +32,92 @@ drawing::drawing(QWidget *parent) :
     greenMid.setCoords(395,100,405,400);
     redMid.setCoords(395,400,405,700);
 
-    scene->addRect(greenLeft,blackpen,dgreenbrush);
-    scene->addRect(redLeft,blackpen,dredbrush);
-    scene->addRect(greenRight,blackpen,dgreenbrush);
-    scene->addRect(redRight,blackpen,dredbrush);
+    scene->addRect(greenLeft,blackPen,darkGreenBrush);
+    scene->addRect(redLeft,blackPen,darkRedBrush);
+    scene->addRect(greenRight,blackPen,darkGreenBrush);
+    scene->addRect(redRight,blackPen,darkRedBrush);
 
-    scene->addRect(greenMid,blackpen,dgreenbrush);
-    scene->addRect(redMid,blackpen,dredbrush);
+    scene->addRect(greenMid,blackPen,darkGreenBrush);
+    scene->addRect(redMid,blackPen,darkRedBrush);
 
     QFont font=QFont("Arial", 10, QFont::Bold);
-    QString str = "0.0";
 
-    QGraphicsTextItem* item01 = new QGraphicsTextItem();
-    item01->setDefaultTextColor(QColorConstants::Black);
-    item01->setFont(font);
-    item01->setHtml(str);
-    item01->setPos(65,690);
-    scene->addItem(item01);
+    QString str = "0.0"; //добавляем 0.0 возле левого и правого прямоугольников
 
-    QGraphicsTextItem* item02 = new QGraphicsTextItem();
-    item02->setDefaultTextColor(QColorConstants::Black);
-    item02->setFont(font);
-    item02->setHtml(str);
-    item02->setPos(710,85);
-    scene->addItem(item02);
+    QGraphicsTextItem* zeroLabelLeft = new QGraphicsTextItem();
+    zeroLabelLeft->setDefaultTextColor(QColorConstants::Black);
+    zeroLabelLeft->setFont(font);
+    zeroLabelLeft->setHtml(str);
+    zeroLabelLeft->setPos(65,690);
+    scene->addItem(zeroLabelLeft);
+    QGraphicsTextItem* zeroLabelRight = new QGraphicsTextItem();
+    zeroLabelRight ->setDefaultTextColor(QColorConstants::Black);
+    zeroLabelRight ->setFont(font);
+    zeroLabelRight ->setHtml(str);
+    zeroLabelRight ->setPos(710,85);
+    scene->addItem(zeroLabelRight );
 
-    str = "1.0";
+    str = "1.0"; //добавляем 1.0 возле левого и правого прямоугольников
 
-    QGraphicsTextItem* item11 = new QGraphicsTextItem();
-    item11->setDefaultTextColor(QColorConstants::Black);
-    item11->setFont(font);
-    item11->setHtml(str);
-    item11->setPos(65,85);
-    scene->addItem(item11);
-    QGraphicsTextItem* item12 = new QGraphicsTextItem();
-    item12->setDefaultTextColor(QColorConstants::Black);
-    item12->setFont(font);
-    item12->setHtml(str);
-    item12->setPos(710,690);
-    scene->addItem(item12);
+    QGraphicsTextItem* oneLabelLeft = new QGraphicsTextItem();
+    oneLabelLeft->setDefaultTextColor(QColorConstants::Black);
+    oneLabelLeft->setFont(font);
+    oneLabelLeft->setHtml(str);
+    oneLabelLeft->setPos(65,85);
+    scene->addItem(oneLabelLeft);
+    QGraphicsTextItem* oneLabelRight = new QGraphicsTextItem();
+    oneLabelRight->setDefaultTextColor(QColorConstants::Black);
+    oneLabelRight->setFont(font);
+    oneLabelRight->setHtml(str);
+    oneLabelRight->setPos(710,690);
+    scene->addItem(oneLabelRight);
 
-    str = "Phi+";
-    QGraphicsTextItem* PhiPlus = new QGraphicsTextItem();
-    PhiPlus->setDefaultTextColor(QColorConstants::Black);
-    PhiPlus->setFont(font);
-    PhiPlus->setHtml(str);
-    PhiPlus->setPos(55,390);
-    scene->addItem(PhiPlus);
+    str = "Phi+"; //добавляем Phi+ возле левого прямоугольника
+    QGraphicsTextItem* phiPositiveLabel = new QGraphicsTextItem();
+    phiPositiveLabel->setDefaultTextColor(QColorConstants::Black);
+    phiPositiveLabel->setFont(font);
+    phiPositiveLabel->setHtml(str);
+    phiPositiveLabel->setPos(55,390);
+    scene->addItem(phiPositiveLabel);
 
-    str = "Phi-";
-    QGraphicsTextItem* PhiMinus = new QGraphicsTextItem();
-    PhiMinus->setDefaultTextColor(QColorConstants::Black);
-    PhiMinus->setFont(font);
-    PhiMinus->setHtml(str);
-    PhiMinus->setPos(710,390);
-    scene->addItem(PhiMinus);
+    str = "Phi-"; //добавляем Phi- возле правого прямоугольника
+    QGraphicsTextItem* phiNegativeLabel = new QGraphicsTextItem();
+    phiNegativeLabel->setDefaultTextColor(QColorConstants::Black);
+    phiNegativeLabel->setFont(font);
+    phiNegativeLabel->setHtml(str);
+    phiNegativeLabel->setPos(710,390);
+    scene->addItem(phiNegativeLabel);
+
+
+    double phiPositiveArray[m_drawingAlternativesAmount];
+    double phiNegativeArray[m_drawingAlternativesAmount];
+    // заполняем массивы значениями Phi альтернатив
+    for (int i=0; i<m_drawingAlternativesAmount;i++)
+    {
+        phiPositiveArray[i]=m_drawingAlternatives[i].getPhiPositive();
+        // вычитаем значение для корректного построения,
+        // поскольку значения справа для Phi- идут от 0 до 1 сверху вниз,
+        // и Phi не может быть больше 1, вычитаем Phi-
+        // из единицы для получения противоположного значения
+        phiNegativeArray[i]=1-m_drawingAlternatives[i].getPhiNegative();
+    }
+    for (int i=0; i<m_drawingAlternativesAmount;i++){
+        // рисуем диагональ
+        // 700-660*Phi т.к. y в нижней точке поля для рисования равен 800, прямоугольники высотой 600,
+        // снизу и сверху от прямоугольников отступ равен 100. При Phi = 1 значение совпадает с верхней
+        // частью прямоугольника, при Phi = 0 - с нижней.
+        scene->addLine(120,700-600*phiPositiveArray[i],680,700-600*phiNegativeArray[i],yellowPen);
+        scene->addLine(100,700-600*phiPositiveArray[i],120,700-600*phiPositiveArray[i],yellowPen); //рисуем _ слева
+        scene->addLine(680,700-600*phiNegativeArray[i],700,700-600*phiNegativeArray[i],yellowPen); //рисуем _ справа
+    }
 
     ui->graphicsView->setScene(scene);
+
+
 }
 
-drawing::~drawing()
+Drawing::~Drawing()
 {
     delete ui;
 }
-
 
