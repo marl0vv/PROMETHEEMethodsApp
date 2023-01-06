@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <QString>
 
 class Actions
 {
@@ -18,12 +19,14 @@ public:
     double &getPhiPositive() {return m_phiPositive;}
     double &getPhiNegative() {return m_phiNegative;}
     double &getPhi() {return m_phi;}
+    QString &getName() {return name;}
 private:
     std::vector<double> m_criterias;
     //std::vector<std::vector<double>> differTable;
     std::unordered_map<size_t, std::vector<double>> differTable;
     std::vector<double> m_positivePreferenceIndices;
     std::vector<double> m_negativePreferenceIndices;
+    QString name;
     double m_phiPositive;
     double m_phiNegative;
     double m_phi;

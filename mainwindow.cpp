@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QLineEdit>
 #include <QDebug>
 #include <cmath>
 
@@ -268,6 +269,17 @@ void MainWindow::onWeightComboBoxChanged(double d)
     }
 
 }
+void MainWindow::onActionNameLineEditChanged(const QString &text)
+{
+    int row = sender()->property("row").toInt();
+    qDebug() << "ROW: " << row;
+    m_actions[row - 13].getName() = text;
+
+    for (int i = 0; i < m_actionsCount; i++)
+    {
+        qDebug() << "Action  " << i+1  << " name: "<< m_actions[i].getName();
+    }
+}
 void MainWindow::buildTable()
 {
 
@@ -370,8 +382,12 @@ void MainWindow::buildTable()
     //заполняю строки с actions
     for (int i = 0; i < m_actionsCount; i++)
     {
-        QString actionName = "Альтернатива" + QString::number(i+1);
-        ui->tableWidget->setItem(13+i, 1, new QTableWidgetItem(actionName));
+        QLineEdit* actionName = new QLineEdit();
+        actionName->setProperty("row", QVariant(13+i));
+        connect(actionName, &QLineEdit::textChanged, this, &MainWindow::onActionNameLineEditChanged);
+        QString actionNameString = "Альтернатива" + QString::number(i+1);
+        actionName->setText(actionNameString);
+        ui->tableWidget->setCellWidget(13+i, 1, actionName);
     }
 
     //заполняем строки с actions и criterias
@@ -387,7 +403,7 @@ void MainWindow::buildTable()
             actionValue->setMinimum(INT_MIN);
             actionValue->setMaximum(INT_MAX);
             ui->tableWidget->setCellWidget(13+i, 2+j, actionValue);
-            //ui->tableWidget->setItem(13+i, 2+j, new QTableWidgetItem("n/a"));
+
         }
     }
 
@@ -404,7 +420,7 @@ void MainWindow::on_actionNew_triggered()
     m_criteriasWeight.resize(m_criteriasCount);
     m_criteriasTableWeight.resize(m_criteriasCount);
 
-    buildTable();
+
 
     //идёт расширение вектора альтернатив, созданного в классе mainwindow
     //до размеров m_actionsCount и m_criteriasCount
@@ -414,6 +430,7 @@ void MainWindow::on_actionNew_triggered()
         m_actions[i].getCriteria().resize(m_criteriasCount, 0);
     }
 
+    buildTable();
 
     //в этом кусочке вектора объекта m_actions заполняются нулями,
     //так как логично, что при создании новой таблицы они должны быть равны нулям
