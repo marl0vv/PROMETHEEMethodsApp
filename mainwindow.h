@@ -28,9 +28,8 @@ public:
     void statsFindDeviation();
     void buildPositivePreferenceIndicies(int k);
     void buildNegativePreferenceIndicies(int k);
-
     void PrometheeMethod();
-
+    std::vector<Actions> &getActions() {return m_actions;}
 private slots:
     void on_actionNew_triggered();
     void onComboBoxChanged(int index);
@@ -39,8 +38,8 @@ private slots:
     void onMinOrMaxComboBoxChanged(int index);
     void onWeightComboBoxChanged(double d);
     void onActionNameLineEditChanged(const QString &text);
-
     void on_pushButton_clicked();
+    void on_action_2_triggered();
 
 private:
     const int m_defaultColumnCount = 2;

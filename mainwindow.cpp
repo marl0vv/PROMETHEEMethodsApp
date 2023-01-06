@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "drawing.h"
 #include "newproblemdialog.h"
 #include "Actions.h"
 
@@ -590,5 +591,12 @@ void MainWindow::buildNegativePreferenceIndicies(int k)
 void MainWindow::on_pushButton_clicked()
 {
     PrometheeMethod();
+}
+
+
+void MainWindow::on_action_2_triggered()
+{
+    Drawing *drawing = new Drawing(nullptr,m_actions,m_actionsCount);
+    drawing->show();
 }
 
