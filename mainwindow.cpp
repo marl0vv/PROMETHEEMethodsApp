@@ -414,7 +414,10 @@ void MainWindow::on_actionNew_triggered()
 {
     NewProblemDialog newProblemDialog(nullptr);
     newProblemDialog.setModal(true);
-    newProblemDialog.exec();
+    if (newProblemDialog.exec() == 0) //если окно закрыто, то программа возвращается к исходному состоянию
+    {
+        return;
+    }
     m_actionsCount = newProblemDialog.getActions();
     m_criteriasCount = newProblemDialog.getCriterias();
     m_criteriasMinMax.resize(m_criteriasCount);
