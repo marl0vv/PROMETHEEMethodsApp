@@ -424,14 +424,16 @@ void MainWindow::on_actionNew_triggered()
     m_criteriasWeight.resize(m_criteriasCount);
     m_criteriasTableWeight.resize(m_criteriasCount);
 
-
-
-    //идёт расширение вектора альтернатив, созданного в классе mainwindow
+    //Расширение вектора альтернатив, созданного в классе mainwindow,
     //до размеров m_actionsCount и m_criteriasCount
+    //Затем расширение вектора положительных предпочтений,
+    //вектора отрицательных предпочтений и вектора критерий для каждой альтернативы
     m_actions.resize(m_actionsCount, Actions());
     for(int i = 0; i < m_actions.size(); i++)
     {
         m_actions[i].getCriteria().resize(m_criteriasCount, 0);
+        m_actions[i].getPositivePreferenceIndicies().resize(m_actionsCount);
+        m_actions[i].getNegativePreferenceIndicies().resize(m_actionsCount);
     }
 
     buildTable();
@@ -461,6 +463,16 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::PrometheeMethod()
 {
+    for (int i = 0; i < m_actionsCount; i++)
+    {
+        m_actions[i].getDifferTable().clear();
+        for (int j = 0; j < m_actionsCount; j++)
+        {
+            m_actions[i].getPositivePreferenceIndicies()[j] = 0;
+            m_actions[i].getNegativePreferenceIndicies()[j] = 0;
+        }
+
+    }
     //создаём таблицу разностей.
     //Для каждой альтернативы отнимаем от критериев текущей альтернативы критерии всех остальных альтернатив
     for (int k = 0; k < m_actionsCount; k++)
@@ -490,16 +502,6 @@ void MainWindow::PrometheeMethod()
 
         }
     }
-
-
-    //Увеличиваем размер векторов под количество альтернатив. Возможно, это стоит перенести в блок
-    //создания таблицы
-    for(int i = 0; i < m_actionsCount; i++)
-    {
-        m_actions[i].getPositivePreferenceIndicies().resize(m_actionsCount);
-        m_actions[i].getNegativePreferenceIndicies().resize(m_actionsCount);
-    }
-
 
     //ВНИМАНИЕ! В целях тестирования разделил на два разных цикла. Затем можно засунуть в один
     qDebug() << "Positive Preference Indicies:";
@@ -560,7 +562,7 @@ void MainWindow::buildPositivePreferenceIndicies(int k)
     qDebug() << "Upper action: " << k+1 << m_actions[k].getPositivePreferenceIndicies();
 }
 
-//это ёбаный ужас, сейчас я пойду передохну, а потом подробно опишу, что здесь
+//
 void MainWindow::buildNegativePreferenceIndicies(int k)
 {
     for (int z = 0; z < m_actionsCount; z++)
@@ -595,7 +597,6 @@ void MainWindow::on_pushButton_clicked()
 {
     PrometheeMethod();
 }
-
 
 void MainWindow::on_action_2_triggered()
 {
