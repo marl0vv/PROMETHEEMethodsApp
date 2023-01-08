@@ -38,7 +38,7 @@ private slots:
     void onMinOrMaxComboBoxChanged(int index);
     void onWeightComboBoxChanged(double d);
     void onActionNameLineEditChanged(const QString &text);
-    void on_pushButton_clicked();
+    //void on_pushButton_clicked();
     void on_action_2_triggered();
 
 private:

@@ -130,6 +130,7 @@ void MainWindow::onCriteriaSpinBoxChanged(double d)
     statsFindMin();
     statsFindAverage();
     statsFindDeviation();
+    PrometheeMethod();
 }
 
 void MainWindow::onCriteriaComboBoxChanged(int index)
@@ -154,6 +155,7 @@ void MainWindow::onCriteriaComboBoxChanged(int index)
     statsFindMin();
     statsFindAverage();
     statsFindDeviation();
+    PrometheeMethod();
 }
 
 //функция для вывода максимального элемента по одному критерию среди всех альтернатив в блоке статистики
@@ -254,6 +256,8 @@ void MainWindow::onMinOrMaxComboBoxChanged(int index)
     {
         qDebug() << "Criteria  " << i+1  << "Min or Max: " << m_criteriasMinMax[i];
     }
+
+     PrometheeMethod();
 }
 
 void MainWindow::onWeightComboBoxChanged(double d)
@@ -270,6 +274,8 @@ void MainWindow::onWeightComboBoxChanged(double d)
         m_criteriasWeight[j] = m_criteriasTableWeight[j] / sum;
         qDebug() << " Weight " << j+1 << m_criteriasWeight[j];
     }
+
+     PrometheeMethod();
 }
 void MainWindow::onActionNameLineEditChanged(const QString &text)
 {
@@ -281,6 +287,7 @@ void MainWindow::onActionNameLineEditChanged(const QString &text)
     {
         qDebug() << "Action  " << i+1  << " name: "<< m_actions[i].getName();
     }
+     PrometheeMethod();
 }
 void MainWindow::buildTable()
 {
@@ -593,10 +600,10 @@ void MainWindow::buildNegativePreferenceIndicies(int k)
     //строка для проверки корректности заполнения preferenceIndicies
     qDebug() << "Upper action: " << k+1 << m_actions[k].getNegativePreferenceIndicies();
 }
-void MainWindow::on_pushButton_clicked()
+/*void MainWindow::on_pushButton_clicked()
 {
     PrometheeMethod();
-}
+}*/
 
 void MainWindow::on_action_2_triggered()
 {
