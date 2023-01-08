@@ -32,7 +32,7 @@ public:
     std::vector<Actions> &getActions() {return m_actions;}
 private slots:
     void on_actionNew_triggered();
-    void onComboBoxChanged(int index);
+    void onTypeComboBoxChanged(int index);
     void onCriteriaSpinBoxChanged(double d);
     void onCriteriaComboBoxChanged(int index);
     void onMinOrMaxComboBoxChanged(int index);
