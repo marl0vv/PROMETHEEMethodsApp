@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QDebug>
 #include <cmath>
 
@@ -267,8 +268,8 @@ void MainWindow::onWeightComboBoxChanged(double d)
     for (int j = 0; j < m_criteriasCount; j++)
     {
         m_criteriasWeight[j] = m_criteriasTableWeight[j] / sum;
+        qDebug() << " Weight " << j+1 << m_criteriasWeight[j];
     }
-
 }
 void MainWindow::onActionNameLineEditChanged(const QString &text)
 {
@@ -404,7 +405,6 @@ void MainWindow::buildTable()
             actionValue->setMinimum(INT_MIN);
             actionValue->setMaximum(INT_MAX);
             ui->tableWidget->setCellWidget(13+i, 2+j, actionValue);
-
         }
     }
 
@@ -596,7 +596,14 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_action_2_triggered()
 {
-    Drawing *drawing = new Drawing(nullptr,m_actions,m_actionsCount);
+    if (m_actions.empty())
+    {
+        QMessageBox::warning(this, "Ошибка!","Для отображения Рейтинга PROMETHEE сначала необходимо сгенерировать таблицу!");
+        return;
+    }
+    Drawing *drawing = new Drawing(nullptr, m_actions, m_actionsCount);
+    drawing->setAttribute(Qt::WA_DeleteOnClose);
+    drawing->setWindowModality(Qt::ApplicationModal);
     drawing->show();
 }
 

@@ -1,4 +1,4 @@
-#include "Drawing.h"
+#include "drawing.h"
 #include "ui_drawing.h"
 #include <QGraphicsTextItem>
 #include <QStandardItem>
