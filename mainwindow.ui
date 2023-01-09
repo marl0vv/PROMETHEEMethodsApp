@@ -249,13 +249,6 @@
       </item>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -264,7 +257,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -277,7 +270,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Рисование</string>
+     <string>PROMETHEE-GAIA</string>
     </property>
     <addaction name="separator"/>
     <addaction name="action_2"/>
@@ -290,10 +283,20 @@
    <property name="text">
     <string>Создать новый...</string>
    </property>
+   <property name="font">
+    <font>
+     <family>Roboto</family>
+    </font>
+   </property>
   </action>
   <action name="action_2">
    <property name="text">
-    <string>Рисовать</string>
+    <string>Рейтинг PROMETHEE</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Roboto</family>
+    </font>
    </property>
   </action>
  </widget>

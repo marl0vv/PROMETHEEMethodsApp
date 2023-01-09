@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+*.user
+CMakeLists.txt.user
+CMakeLists.txt.user.c71492c
