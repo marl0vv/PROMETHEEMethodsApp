@@ -1,10 +1,11 @@
 #include "mainwindow.h"
-#include "Drawing.h"
+#include "drawing.h"
 #include "newproblemdialog.h"
 #include "helpdialog.h"
 #include "Actions.h"
 #include "qapplication.h"
 #include "ui_mainwindow.h"
+#include "prometheetable.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -641,5 +642,18 @@ void MainWindow::on_action_help_triggered()
     helpdialog helpdialog(nullptr);
     helpdialog.setModal(true);
     helpdialog.exec();
+}
+
+void MainWindow::on_action_prometheeTable_triggered()
+{
+    if (m_actions.empty())
+    {
+        QMessageBox::warning(this, "Ошибка!","Для отображения Таблицы PROMETHEE сначала необходимо сгенерировать таблицу!");
+        return;
+    }
+    PrometheeTable *table = new PrometheeTable(nullptr, m_actions, m_actionsCount);
+    table->setAttribute(Qt::WA_DeleteOnClose);
+    table->setWindowModality(Qt::ApplicationModal);
+    table->show();
 }
 
