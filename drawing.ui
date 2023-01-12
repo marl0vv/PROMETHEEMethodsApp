@@ -30,7 +30,7 @@
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>PROMETHEE I Partial Ranking</string>
+     <string>PROMETHEE I Частичный Рейтинг</string>
     </attribute>
     <widget class="QGraphicsView" name="graphicsView">
      <property name="geometry">
@@ -53,7 +53,7 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>PROMETHEE II Complete Ranking</string>
+     <string>PROMETHEE II Полный рейтинг</string>
     </attribute>
     <widget class="QGraphicsView" name="graphicsView_2">
      <property name="geometry">

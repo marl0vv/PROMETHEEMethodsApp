@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Создание новой таблицы</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -44,14 +44,14 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Number of actions:</string>
+         <string>Количество альтернатив:</string>
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignVCenter">
+      <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Number of criteria:</string>
+         <string>Количество критериев:</string>
         </property>
        </widget>
       </item>
