@@ -397,10 +397,7 @@ void MainWindow::buildTable()
         //вес
         QDoubleSpinBox* comboWeight = new QDoubleSpinBox();
         comboWeight->setProperty("column", QVariant(2+i));
-        comboWeight->setValue(1);
-        std::fill(m_criteriasTableWeight.begin(), m_criteriasTableWeight.end(), 1);
-        qDebug() << "Table Weight" << m_criteriasTableWeight;
-        m_criteriasWeight[i] = 1/ m_criteriasCount;
+        comboWeight->setValue(1);               
         connect(comboWeight, &QDoubleSpinBox::valueChanged, this, &MainWindow::onWeightComboBoxChanged);
         ui->tableWidget->setCellWidget(6, 2+i, comboWeight);
 
@@ -482,6 +479,21 @@ void MainWindow::on_actionNew_triggered()
         {
             qDebug() << "action " << i+1 << " criteria " << j+1 << " " << m_actions[i].getCriteria()[j];
         }
+    }
+
+    //вектора весов по умолчанию
+    std::fill(m_criteriasTableWeight.begin(), m_criteriasTableWeight.end(), 1);
+    qDebug() << "Table Weight" << m_criteriasTableWeight;
+    int sum = 0;
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        sum += m_criteriasTableWeight[j];
+        qDebug() << "Table Weight " << j+1 << m_criteriasTableWeight[j];
+    }
+    for (int j = 0; j < m_criteriasCount; j++)
+    {
+        m_criteriasWeight[j] = m_criteriasTableWeight[j] / sum;
+        qDebug() << " Weight " << j+1 << m_criteriasWeight[j];
     }
 
 }
