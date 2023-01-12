@@ -24,16 +24,7 @@ void PrometheeTable::phiSort()
 {
     std::sort(m_actions.begin(), m_actions.end(),
               [] (Actions & a, Actions  &b) {return a.getPhi() > b.getPhi();});
-    /*for (int i = 0; i < m_actionsCount; i++)
-    {
-        for(int j = 0; j < m_actionsCount-1; j++)
-        {
-            if (m_actions[j].getPhi() < m_actions[j+1].getPhi())
-            {
-                std::swap(m_actions[j].getPhi(), m_actions[j+1].getPhi());
-            }
-        }
-    }*/
+
     for (int i = 0; i < m_actionsCount; i++)
     {
        qDebug() << m_actions[i].getPhi();
