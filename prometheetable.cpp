@@ -39,6 +39,7 @@ void PrometheeTable::phiSort()
 void PrometheeTable::buildTable()
 {
     ui->tableWidget->verticalHeader()->setVisible(false);
+    ui->tableWidget->setRowCount(m_actionsCount);
     for (int i = 0; i < m_actionsCount; i++)
     {
         ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(i+1)));
