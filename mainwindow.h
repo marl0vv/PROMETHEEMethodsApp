@@ -38,10 +38,9 @@ private slots:
     void onMinOrMaxComboBoxChanged(int index);
     void onWeightComboBoxChanged(double d);
     void onActionNameLineEditChanged(const QString &text);
-    //void on_pushButton_clicked();
     void on_action_2_triggered();
-
     void on_action_help_triggered();
+    void on_action_prometheeTable_triggered();
 
 private:
     const int m_defaultColumnCount = 2;

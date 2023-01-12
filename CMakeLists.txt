@@ -23,7 +23,7 @@ set(PROJECT_SOURCES
         helpdialog.h helpdialog.cpp helpdialog.ui
         Actions.h Actions.cpp
         Drawing.h Drawing.cpp drawing.ui
-
+        prometheetable.h prometheetable.cpp PrometheeTable.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
