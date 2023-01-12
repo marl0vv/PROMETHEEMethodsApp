@@ -22,7 +22,6 @@ public:
     QString &getName() {return name;}
 private:
     std::vector<double> m_criterias;
-    //std::vector<std::vector<double>> differTable;
     std::unordered_map<std::size_t, std::vector<double>> differTable;
     std::vector<double> m_positivePreferenceIndices;
     std::vector<double> m_negativePreferenceIndices;
