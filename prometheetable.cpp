@@ -1,6 +1,7 @@
 #include "prometheetable.h"
 #include "ui_prometheetable.h"
 #include <QDebug>
+#include <algorithm>
 
 PrometheeTable::PrometheeTable(QWidget *parent, const std::vector<Actions> &actions, const int &count) :
     QWidget(parent),
@@ -21,7 +22,9 @@ PrometheeTable::~PrometheeTable()
 
 void PrometheeTable::phiSort()
 {
-    for (int i = 0; i < m_actionsCount; i++)
+    std::sort(m_actions.begin(), m_actions.end(),
+              [] (Actions & a, Actions  &b) {return a.getPhi() > b.getPhi();});
+    /*for (int i = 0; i < m_actionsCount; i++)
     {
         for(int j = 0; j < m_actionsCount-1; j++)
         {
@@ -30,7 +33,7 @@ void PrometheeTable::phiSort()
                 std::swap(m_actions[j].getPhi(), m_actions[j+1].getPhi());
             }
         }
-    }
+    }*/
     for (int i = 0; i < m_actionsCount; i++)
     {
        qDebug() << m_actions[i].getPhi();
