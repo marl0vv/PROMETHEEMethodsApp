@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         newproblemdialog.h newproblemdialog.cpp newproblemdialog.ui
+        helpdialog.h helpdialog.cpp helpdialog.ui
         Actions.h Actions.cpp
         Drawing.h Drawing.cpp drawing.ui
 

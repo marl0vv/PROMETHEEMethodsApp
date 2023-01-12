@@ -41,6 +41,8 @@ private slots:
     void on_pushButton_clicked();
     void on_action_2_triggered();
 
+    void on_action_help_triggered();
+
 private:
     const int m_defaultColumnCount = 2;
     const int m_defaultRowCount = 13;
