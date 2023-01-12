@@ -270,11 +270,8 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-<<<<<<< Updated upstream
      <string>PROMETHEE-GAIA</string>
-=======
      <string>Методы PROMETHEE</string>
->>>>>>> Stashed changes
     </property>
     <addaction name="separator"/>
     <addaction name="action_2"/>
@@ -302,14 +299,12 @@
   </action>
   <action name="action_2">
    <property name="text">
-<<<<<<< Updated upstream
     <string>Рейтинг PROMETHEE</string>
    </property>
    <property name="font">
     <font>
      <family>Roboto</family>
     </font>
-=======
     <string>PROMETHEE I</string>
    </property>
   </action>
@@ -319,7 +314,6 @@
    </property>
    <property name="text">
     <string>Информация о программе</string>
->>>>>>> Stashed changes
    </property>
   </action>
  </widget>
