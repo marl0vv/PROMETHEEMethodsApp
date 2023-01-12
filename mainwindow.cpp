@@ -1,8 +1,10 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "drawing.h"
+#include "Drawing.h"
 #include "newproblemdialog.h"
+#include "helpdialog.h"
 #include "Actions.h"
+#include "qapplication.h"
+#include "ui_mainwindow.h"
 
 #include <QPushButton>
 #include <QComboBox>
@@ -549,7 +551,7 @@ void MainWindow::PrometheeMethod()
             sumNegativePreferenceIndicies += m_actions[i].getNegativePreferenceIndicies()[j];
         }
         m_actions[i].getPhiPositive() = sumPositivePreferenceIndicies/(m_actionsCount-1);
-        m_actions[i].getPhiNegative() = sumNegativePreferenceIndicies/(m_actionsCount -1);
+        m_actions[i].getPhiNegative() = sumNegativePreferenceIndicies/(m_actionsCount-1);
         m_actions[i].getPhi() = m_actions[i].getPhiPositive() - m_actions[i].getPhiNegative();
 
         qDebug() << "Action" << i+1 << "Phi Positive" << m_actions[i].getPhiPositive();
@@ -631,5 +633,13 @@ void MainWindow::on_action_2_triggered()
     drawing->setAttribute(Qt::WA_DeleteOnClose);
     drawing->setWindowModality(Qt::ApplicationModal);
     drawing->show();
+}
+
+
+void MainWindow::on_action_help_triggered()
+{
+    helpdialog helpdialog(nullptr);
+    helpdialog.setModal(true);
+    helpdialog.exec();
 }
 
