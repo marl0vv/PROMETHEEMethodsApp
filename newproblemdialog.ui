@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Создание новой таблицы</string>
+   <string>Создание новой задачи</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
