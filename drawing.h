@@ -26,6 +26,8 @@ private:
     int m_phiPosRightEdge = 120;
     int m_phiNegLeftEdge = 680;
     int m_phiNegRightEdge = 700;
+    double** m_point;
+        int** mas;
 };
 
 #endif // DRAWING_H

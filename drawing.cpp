@@ -3,7 +3,69 @@
 #include <QGraphicsTextItem>
 #include <QStandardItem>
 #include <mainwindow.h>
+#include <QStack>
 
+int DFS(int **mas, bool* vis, int cur,int prev, QStack<int> Q,const int n, QGraphicsScene *scene4, double **point, QPen blackPen){
+    if (vis[cur]==true) return -1;
+    QStack<int> q;
+    vis[cur]=true;
+    if((mas[prev][cur]==0)&&(mas[cur][prev]==1)) {
+        QPointF p1;
+        QPointF p2;
+        p1.setX(point[cur][0]+10);
+        p1.setY(point[cur][1]+10);
+        p2.setX(point[prev][0]+10);
+        p2.setY(point[prev][1]+10);
+        QLineF line;
+        line.setPoints(p1,p2);
+        scene4->addLine(line,blackPen);
+        int x_half = (point[cur][0] + point[prev][0]+20)/2;
+        int y_half = (point[cur][1] + point[prev][1]+20)/2;
+        QLineF arrow;
+        arrow.setP1(QPointF(x_half,y_half));
+        arrow.setAngle(line.angle()+150);
+        arrow.setLength(40);
+        scene4->addLine(arrow, blackPen);
+        arrow.setAngle(line.angle()-150);
+        scene4->addLine(arrow, blackPen);
+
+    }
+    if((mas[prev][cur]==1)&&(mas[cur][prev]==0)) {
+        QPointF p1;
+        QPointF p2;
+        p1.setX(point[cur][0]+10);
+        p1.setY(point[cur][1]+10);
+        p2.setX(point[prev][0]+10);
+        p2.setY(point[prev][1]+10);
+        QLineF line;
+        line.setPoints(p1,p2);
+        scene4->addLine(line,blackPen);
+        int x_half = (point[cur][0] + point[prev][0]+20)/2;
+        int y_half = (point[cur][1] + point[prev][1]+20)/2;
+        QLineF arrow;
+        arrow.setP1(QPointF(x_half,y_half));
+        arrow.setAngle(line.angle()+30);
+        arrow.setLength(40);
+        scene4->addLine(arrow, blackPen);
+        arrow.setAngle(line.angle()-30);
+        scene4->addLine(arrow, blackPen);
+
+    }
+    for(int i=0; i<n;i++){
+        if(vis[i]==false && mas[cur][i]==1 && mas[i][cur]==0) {
+            q.push(i);
+        }
+    }
+    while (!q.empty())
+    {
+        int Prev = cur;
+        int Cur = q.top();
+        q.pop();
+        DFS(mas,vis,Cur,Prev,q,n,scene4,point,blackPen);
+
+    }
+    return 0;
+}
 
 
 Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
@@ -16,6 +78,8 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     setAttribute(Qt::WA_DeleteOnClose);
     QGraphicsScene * scene = new QGraphicsScene;
     QGraphicsScene * scene2 = new QGraphicsScene;
+    QGraphicsScene * scene3 = new QGraphicsScene;
+    QGraphicsScene * scene4 = new QGraphicsScene;
     // Кисти для заливки прямоугольников, отражающих значения phi
     QBrush darkGreenBrush(Qt::darkGreen);
     QBrush darkRedBrush(Qt::darkRed);
@@ -26,6 +90,9 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     QPen yellowPen(Qt::yellow);
     yellowPen.setWidth(3);
     QBrush yellowBrush(Qt::yellow);
+    QPen cyanPen(Qt::cyan);
+    cyanPen.setWidth(3);
+    QBrush cyanBrush(Qt::cyan);
     //рисование прямоугольников - значений Phi для построения графиков
     QRectF greenLeft,redLeft,greenRight,redRight,redMid,greenMid;
 
@@ -45,7 +112,7 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     scene->addRect(greenMid,blackPen,darkGreenBrush);
     scene->addRect(redMid,blackPen,darkRedBrush);
 
-    QFont font=QFont("Arial", 10, QFont::Bold);
+    QFont font=QFont("Roboto", 10, QFont::Bold);
 
     QString str = "0.0"; //добавляем 0.0 возле левого и правого прямоугольников
 
@@ -111,7 +178,7 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
 
     double rectPositiveY;
     double rectNegativeY;
-    QFont nametagFont=QFont("Arial", 8);
+    QFont nametagFont=QFont("Roboto", 8);
 
     for (int i=0; i<m_drawingAlternativesAmount;i++){
         // рисуем диагональ
@@ -182,6 +249,7 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     zeroLabel->setHtml(str);
     zeroLabel->setPos(365,385);
     scene2->addItem(zeroLabel);
+
     int graphY = 0; // переменная для вычисления "высоты", на которой будет строиться прямая
     for (int i=0; i<m_drawingAlternativesAmount;i++){
         if (phiArray[i] < 0){ //если Фи отрицательное
@@ -228,10 +296,254 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
 
     ui->graphicsView_2->setScene(scene2);
 
+    //PROMETHEE Diamond
+    for (int i=0; i<m_drawingAlternativesAmount;i++)
+    {
+        phiPositiveArray[i]=m_drawingAlternatives[i].getPhiPositive();
+        // вычитаем значение для корректного построения,
+        // поскольку значения справа для Phi- идут от 0 до 1 сверху вниз,
+        // и Phi не может быть больше 1, вычитаем Phi-
+        // из единицы для получения противоположного значения
+        phiNegativeArray[i]=m_drawingAlternatives[i].getPhiNegative();
+        phiArray[i]=m_drawingAlternatives[i].getPhi();
+    }
+
+    scene3->addRect(greenMid,blackPen,darkGreenBrush);
+    scene3->addRect(redMid,blackPen,darkRedBrush);
+    str = "+1.0";
+    QGraphicsTextItem* positiveOneLabelDiamond = new QGraphicsTextItem();
+    positiveOneLabelDiamond->setDefaultTextColor(QColorConstants::Black);
+    positiveOneLabelDiamond->setFont(font);
+    positiveOneLabelDiamond->setHtml(str);
+    positiveOneLabelDiamond->setPos(380,75);
+    scene3->addItem(positiveOneLabelDiamond);
+    str = "-1.0";
+    QGraphicsTextItem* negativeOneLabelDiamond = new QGraphicsTextItem();
+    negativeOneLabelDiamond->setDefaultTextColor(QColorConstants::Black);
+    negativeOneLabelDiamond->setFont(font);
+    negativeOneLabelDiamond->setHtml(str);
+    negativeOneLabelDiamond->setPos(380,700);
+    scene3->addItem(negativeOneLabelDiamond);
+    str = "0.0";
+    QGraphicsTextItem* zeroLabelDiamond = new QGraphicsTextItem();
+    zeroLabelDiamond->setDefaultTextColor(QColorConstants::Black);
+    zeroLabelDiamond->setFont(font);
+    zeroLabelDiamond->setHtml(str);
+    zeroLabelDiamond->setPos(365,385);
+    scene3->addItem(zeroLabelDiamond);
+    scene3->addLine(400,100,100,400,blackPen);
+    scene3->addLine(100,400,400,700,blackPen); // - Phi-
+    scene3->addLine(400,700,700,400,blackPen); //   Phi+
+    scene3->addLine(700,400,400,100,blackPen);
+    graphY = 0;
+    qreal xPhiNeg;
+    qreal xPhiPos;
+    qreal yPhiNeg;
+    qreal yPhiPos;
+    qreal xTopPoint;
+    for (int i=0; i<m_drawingAlternativesAmount;i++){
+        if (phiArray[i] < 0){ //если Фи отрицательное
+            phiArray[i] *= -1; // делаем его положительным
+            //но строим в нижней (красной) половине отрезка
+            //            600/2 = 300       + отступ (100)     +         300            * Фи, при Фи равном -1 рисуем в точке 700 (низ отрезка)
+            graphY = m_phiRectangleHeight/2 + m_verticalIndent + m_phiRectangleHeight/2 * phiArray[i];
+        } // иначе рисуем в верхней (зеленой) половине отрезка
+     // середина отрезка 800/2 = 400   -       300              * Фи, при Фи равном 1 рисуем в точке с Y=100 (верх отрезка)
+        else graphY = m_windowHeight/2 - m_phiRectangleHeight/2 * phiArray[i];
+
+        xPhiNeg = 100+300*phiNegativeArray[i];
+        xPhiPos = 400+300*phiPositiveArray[i];
+        yPhiNeg = 400+300*phiNegativeArray[i];
+        yPhiPos = 700-300*phiPositiveArray[i];
+        xTopPoint = xPhiNeg+xPhiPos-400;
+
+        scene3->addLine(xPhiNeg,yPhiNeg, xTopPoint, graphY, cyanPen);
+        scene3->addLine(xPhiPos,yPhiPos, xTopPoint, graphY, cyanPen);
+        scene3->addLine(xTopPoint, graphY, xTopPoint+150+i*10, graphY, cyanPen);
+        QString name = m_drawingAlternatives[i].getName();
+        QRectF *highlightRectName = new QRectF;
+        int nameLength = name.length();
+        highlightRectName->setCoords(xTopPoint+150+i*10+nameLength*7,graphY-8,xTopPoint+150+i*10,graphY+8);
+        scene3->addRect(*highlightRectName,cyanPen,cyanBrush);
+        delete(highlightRectName);
+        QGraphicsTextItem* alernativeNametag = new QGraphicsTextItem();
+        alernativeNametag->setDefaultTextColor(QColorConstants::Black);
+        alernativeNametag->setFont(nametagFont);
+        alernativeNametag->setHtml(name);
+        alernativeNametag->setPos(xTopPoint+150+i*10,graphY-7);
+        scene3->addItem(alernativeNametag);
+
+    }
+    ui->graphicsView_3->setScene(scene3);
+
+
+
+
+
+
+
+    //рисуем 4 график
+
+    double maxphi = -99999;
+    int pos_maxphi= 0;
+    double secondmaxphi = -99999;
+    int pos_secondmaxphi= 0;
+    double x_half;
+    double y_half;
+    int r=250;
+    int n = m_drawingAlternativesAmount;
+    m_point = new double* [n];
+    mas = new int* [n];
+    int* connections =new int[n];
+    double slice = 2 * 3.14 / n;
+    QBrush whitebrush(Qt::white);
+    bool* vis;
+
+
+    for (int i = 0; i < n; i++) {
+                 mas[i] = new int[n];
+    }
+    for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+              mas[i][j] = 0;
+         }
+    }
+    if(n>10) {
+        r += (n-10)*15;
+    }
+    for(int i = 0 ; i < n; i++) {
+        m_point[i] = new double[2];
+    }
+    for(int i = 0 ; i < n; i++) {
+        double angle = slice * i;
+        m_point[i][0] = (double)(400 + r * cos(angle));
+        m_point[i][1] = (double)(400 + r * sin(angle));
+    }
+
+
+    for (int i = 0 ; i < n; i++) {
+        for (int j = 0 ; j < n; j++) {
+
+        if ((m_drawingAlternatives[i].getPhiPositive() > m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() < m_drawingAlternatives[j].getPhiNegative())
+                || (m_drawingAlternatives[i].getPhiPositive() > m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() == m_drawingAlternatives[j].getPhiNegative())
+                || (m_drawingAlternatives[i].getPhiPositive() == m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() < m_drawingAlternatives[j].getPhiNegative()))
+        {
+            mas[i][j]=1;
+            mas[j][i]=0;
+        }
+        else if ((m_drawingAlternatives[i].getPhiPositive() < m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() > m_drawingAlternatives[j].getPhiNegative())
+                 || (m_drawingAlternatives[i].getPhiPositive() < m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() == m_drawingAlternatives[j].getPhiNegative())
+                 || (m_drawingAlternatives[i].getPhiPositive() == m_drawingAlternatives[j].getPhiPositive()) && (m_drawingAlternatives[i].getPhiNegative() > m_drawingAlternatives[j].getPhiNegative()))
+        {
+            mas[i][j]=0;
+            mas[j][i]=1;
+        }
+        else {
+            mas[i][j]=0;
+            mas[j][i]=0;
+        }
+        }
+    }
+        vis = new bool[n];
+        for(int i = 0; i < n; i++) {
+            vis[i] = false;
+        }
+
+        for(int i=0; i < n; i++) {
+                connections[i]=0;
+                }
+        for(int i=0; i < n; i++) {
+            if(m_drawingAlternatives[i].getPhi() > maxphi) {
+                maxphi=m_drawingAlternatives[i].getPhi();
+                pos_maxphi=i;
+        } if ((m_drawingAlternatives[i].getPhi() > secondmaxphi)&&(m_drawingAlternatives[i].getPhi()!=maxphi)){
+                secondmaxphi = m_drawingAlternatives[i].getPhi();
+                pos_secondmaxphi=i;
+                }
+            }
+        for(int i=0; i < n; i++) {
+                for(int j=0; j < n; j++) {
+                    if((mas[i][j]>0)) {
+                        connections[i]++;
+                    }
+                }
+
+             }
+
+            int start = pos_maxphi;
+            qDebug() << start;
+            qDebug() << pos_secondmaxphi;
+            qDebug() << maxphi;
+            qDebug() << secondmaxphi;
+            QStack<int> q;
+           q.push(start);
+           DFS(mas,vis,start,start,q,n,scene4,m_point,blackPen);
+           for (int i = 0; i < n; i++)
+                {
+                    if ((vis[i] == false)&&(connections[i] > 0))
+                {
+                    for (int j = 0; j<n;j++)
+                    {
+                        if ((mas[i][j]==1) && (vis[j]==false))
+                        {
+                            DFS(mas,vis,j,i,q,n,scene4,m_point,blackPen);
+                        }
+                     }
+                 }
+                 }
+
+
+    for(int i = 0; i < n; i++) {
+
+        //вершины графа
+        QString name = m_drawingAlternatives[i].getName();
+        int nameLength = name.length();
+        QString phiPos = QString::number(m_drawingAlternatives[i].getPhiPositive());
+        int phiPosLength = phiPos.length();
+        QString phiNeg = QString::number(m_drawingAlternatives[i].getPhiNegative());
+        int phiNegLength = phiNeg.length();
+        QGraphicsTextItem* phiNametag = new QGraphicsTextItem();
+        phiNametag->setDefaultTextColor(QColorConstants::Black);
+        phiNametag->setFont(nametagFont);
+        phiNametag->setHtml("phi+: "+phiPos+" phi-: "+phiNeg);
+        phiNametag->setPos(m_point[i][0],m_point[i][1]+15);
+        QGraphicsTextItem* alernativeNametag = new QGraphicsTextItem();
+        alernativeNametag->setDefaultTextColor(QColorConstants::Black);
+        alernativeNametag->setFont(nametagFont);
+        alernativeNametag->setHtml(name);
+        alernativeNametag->setPos(m_point[i][0],m_point[i][1]);
+        scene4->addRect(QRectF(m_point[i][0],m_point[i][1],std::max(60+phiPosLength*7+phiNegLength*7,nameLength*7), 40), blackPen ,whitebrush);
+        scene4->addItem(phiNametag);
+        scene4->addItem(alernativeNametag);
+
+    }
+    /*
+    QString matrixoutput;
+    for (int i = 0; i < n; i++) //
+         {
+             for (int j = 0; j<n;j++)
+             {
+                 matrixoutput+=QString::number(mas[i][j])+" ";
+
+              }
+             matrixoutput+="\n";
+          }
+    QGraphicsTextItem* moutp = new QGraphicsTextItem();
+    moutp->setDefaultTextColor(QColorConstants::Black);
+    moutp->setFont(nametagFont);
+    moutp->setHtml(matrixoutput);
+    moutp->setPos(100,20);
+    scene4->addItem(moutp);
+*/
+
+    ui->graphicsView_4->setScene(scene4);
+
+
 }
 
 Drawing::~Drawing()
 {
     delete ui;
 }
+
 
