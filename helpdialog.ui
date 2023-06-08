@@ -50,16 +50,6 @@ hr { height: 1px; border-width: 0; }
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="text">
-       <string>Ок</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>

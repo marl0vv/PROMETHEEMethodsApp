@@ -6,17 +6,10 @@ helpdialog::helpdialog(QWidget *parent) :
     ui(new Ui::helpdialog)
 {
     ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 helpdialog::~helpdialog()
 {
     delete ui;
 }
-
-void helpdialog::on_pushButton_clicked()
-{
-    hide();
-    close();
-}
-

@@ -651,9 +651,9 @@ void MainWindow::on_action_2_triggered()
 
 void MainWindow::on_action_help_triggered()
 {
-    helpdialog helpdialog(nullptr);
-    helpdialog.setModal(true);
-    helpdialog.exec();
+    helpdialog *helpwindow = new helpdialog(this);
+    helpwindow->setModal(true);
+    helpwindow->exec();
 }
 
 void MainWindow::on_action_prometheeTable_triggered()
