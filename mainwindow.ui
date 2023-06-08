@@ -257,7 +257,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -270,11 +270,11 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>PROMETHEE-GAIA</string>
      <string>Методы PROMETHEE</string>
     </property>
     <addaction name="separator"/>
     <addaction name="action_2"/>
+    <addaction name="action_prometheeTable"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -303,17 +303,22 @@
    </property>
    <property name="font">
     <font>
-     <family>Roboto</family>
+     <family>PROMETHEE I</family>
     </font>
-    <string>PROMETHEE I</string>
    </property>
   </action>
   <action name="action_help">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Информация о программе</string>
+   </property>
+  </action>
+  <action name="action_prometheeTable">
+   <property name="text">
+    <string>Таблица PROMETHEE</string>
    </property>
   </action>
  </widget>
