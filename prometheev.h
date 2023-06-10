@@ -2,6 +2,8 @@
 #define PROMETHEEV_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include <QString>
 
 #include "Actions.h"
 
@@ -16,11 +18,15 @@ class PrometheeV : public QWidget
 public:
     explicit PrometheeV(QWidget *parent, std::vector<Actions> &actions);
     ~PrometheeV();
+    void buildTable();
+    int getActionsCount() const {return m_actions.size();}
 
 private:
     Ui::PrometheeV *ui;
 
     std::vector<Actions> m_actions;
+    const int m_defaultColumnCount = 2;
+    const int m_defaultRowCount = 3;
 };
 
 #endif // PROMETHEEV_H
