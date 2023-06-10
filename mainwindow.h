@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "Actions.h"
+#include "prometheev.h"
 
 #include <QMainWindow>
 #include <vector>
@@ -41,6 +42,8 @@ private slots:
     void on_action_2_triggered();
     void on_action_help_triggered();
     void on_action_prometheeTable_triggered();
+
+    void on_actionPROMETHEE_V_triggered();
 
 private:
     const int m_defaultColumnCount = 2;

@@ -5,7 +5,6 @@
 #include <mainwindow.h>
 #include <QStack>
 
-#include "ortools/linear_solver/linear_solver.h"
 
 int DFS(int **mas, bool* vis, int cur,int prev, QStack<int> Q,const int n, QGraphicsScene *scene4, double **point, QPen blackPen){
     if (vis[cur]==true) return -1;

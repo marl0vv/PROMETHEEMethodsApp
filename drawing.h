@@ -2,7 +2,9 @@
 #define DRAWING_H
 
 #include <QWidget>
-#include <mainwindow.h>
+
+#include "Actions.h"
+
 namespace Ui {
 class Drawing;
 }
@@ -12,7 +14,7 @@ class Drawing : public QWidget
     Q_OBJECT
 
 public:
-    explicit Drawing(QWidget *parent,std::vector<Actions> &actions,int &count);
+    explicit Drawing(QWidget *parent, std::vector<Actions> &actions,int &count);
     ~Drawing();
 private:
     Ui::Drawing *ui;

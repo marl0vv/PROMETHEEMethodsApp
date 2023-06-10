@@ -39,6 +39,7 @@ set(PROJECT_SOURCES
         Actions.h Actions.cpp
         Drawing.h Drawing.cpp drawing.ui
         prometheetable.h prometheetable.cpp PrometheeTable.ui
+        prometheev.h prometheev.cpp prometheev.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
