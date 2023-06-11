@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "Actions.h"
-
+#include "ortools/linear_solver/linear_solver.h"
 namespace Ui {
 class PrometheeV;
 }
@@ -36,6 +36,7 @@ private:
     std::vector<std::vector<double>> constraint_coeffs;
     std::vector<double> bounds;
     std::vector<int> constraintCompare;
+    std::vector<const operations_research::MPVariable*> results;
 };
 
 #endif // PROMETHEEV_H

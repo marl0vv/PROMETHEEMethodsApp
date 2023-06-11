@@ -1,12 +1,13 @@
 #include "prometheev.h"
-#include "ui_prometheev.h"
 #include "ortools/linear_solver/linear_solver.h"
+#include "ui_prometheev.h"
 
 #include <QDebug>
 #include <QString>
 #include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QComboBox>
+#include <memory>
 
 
 
@@ -101,8 +102,10 @@ void PrometheeV::on_pushButtonAddConstraint_clicked()
 
     //Заполнение выбора больше, меньше или равно ограничению должны быть коэффициенты
     int defaultConstraintCompareColumn = 2;
+    constraintCompare.push_back(0);
     QComboBox* constraintCompare = new QComboBox();
     constraintCompare->setProperty("row", defaultConstraintRow);
+    constraintCompare->setProperty("column", defaultConstraintCompareColumn + getActionsCount());
     connect(constraintCompare, &QComboBox::currentIndexChanged, this, &PrometheeV::onConstraintCompareComboBoxChanged);
 
     constraintCompare->addItem("<=");
@@ -112,7 +115,9 @@ void PrometheeV::on_pushButtonAddConstraint_clicked()
 
     //Заполнение значения ограничения
     int defaultConstraintColumn = 3;
+    bounds.push_back(0);
     QDoubleSpinBox* constraintValue = new QDoubleSpinBox(0);
+    constraintValue->setProperty("row", defaultConstraintRow);
     connect(constraintValue, &QDoubleSpinBox::valueChanged, this, &PrometheeV::onConstraintValueSpinBoxChanged);
 
     constraintValue->setMinimum(INT_MIN);
@@ -143,11 +148,17 @@ void PrometheeV::onConstraintCoeffsSpinBoxChanged(double d)
         }
     }
 
+    prometheeV();
 }
 
 void PrometheeV::onConstraintCompareComboBoxChanged(int index)
 {
-    constraintCompare.push_back(index);
+    int row = sender()->property("row").toInt();
+
+
+    int defaultRow = 3;
+
+    constraintCompare[row - defaultRow] = index;
 
     //тестовый вывод содержимого
     for(int i = 0; i < constraintCompare.size(); i++)
@@ -158,7 +169,11 @@ void PrometheeV::onConstraintCompareComboBoxChanged(int index)
 
 void PrometheeV::onConstraintValueSpinBoxChanged(double d)
 {
-    bounds.push_back(d);
+    int row = sender()->property("row").toInt();
+    int defaultRow = 3;
+
+    bounds[row - defaultRow] = d;
+
     //тестовый вывод содержимого
     for(int i = 0; i < bounds.size(); i++)
     {
@@ -168,6 +183,53 @@ void PrometheeV::onConstraintValueSpinBoxChanged(double d)
 
 void PrometheeV::prometheeV()
 {
+    results.resize(getActionsCount());
     int numConstraints = bounds.size(); //количество ограничений; количество коэффициентов мы содержим в getActionsCount()
+    std::unique_ptr<operations_research::MPSolver> solver(operations_research::MPSolver::CreateSolver("SCIP"));
+    if (!solver) {
+        qDebug() << "SCIP solver unavailable.";
+        return;
+    }
+
+    //устанавливаем для итоговых значений варианты 0 или 1,
+    //как прописано в методе
+    for (int j = 0; j < getActionsCount(); ++j)
+    {
+        results[j] = solver->MakeIntVar(0.0, 1, "");
+    }
+    qDebug() << "Number of variables = " << solver->NumVariables();
+
+    // Задаём ограничения.
+    for (int i = 0; i < numConstraints; ++i)
+    {
+        operations_research::MPConstraint* constraint = solver->MakeRowConstraint(0, bounds[i], "");
+        for (int j = 0; j < getActionsCount(); ++j)
+        {
+             constraint->SetCoefficient(results[j], constraint_coeffs[i][j]);
+        }
+    }
+    qDebug() << "Number of constraints = " << solver->NumConstraints();
+
+    //Устанавливаем задачу максимизации или минимизации
+    operations_research::MPObjective* const objective = solver->MutableObjective();
+    for (int j = 0; j < getActionsCount(); ++j) {
+        objective->SetCoefficient(results[j], m_actions[j].getPhi());
+    }
+    objective->SetMaximization();
+
+    const operations_research::MPSolver::ResultStatus result_status = solver->Solve();
+
+    // Check that the problem has an optimal solution.
+    if (result_status != operations_research::MPSolver::OPTIMAL) {
+        qDebug() << "The problem does not have an optimal solution.";
+    }
+    qDebug() << "Solution:";
+    qDebug() << "Optimal objective value = " << objective->Value();
+
+    for (int j = 0; j < getActionsCount(); ++j)
+    {
+        qDebug() << "x[" << j << "] = " << results[j]->solution_value();
+    }
 
 }
+
