@@ -2,8 +2,6 @@
 #define PROMETHEEV_H
 
 #include <QWidget>
-#include <QLineEdit>
-#include <QString>
 
 #include "Actions.h"
 
@@ -20,13 +18,24 @@ public:
     ~PrometheeV();
     void buildTable();
     int getActionsCount() const {return m_actions.size();}
+    void prometheeV();
+
+
+private slots:
+    void on_pushButtonAddConstraint_clicked();
+    void onConstraintCoeffsSpinBoxChanged(double d);
+    void onConstraintCompareComboBoxChanged(int index);
+    void onConstraintValueSpinBoxChanged(double d);
 
 private:
     Ui::PrometheeV *ui;
 
     std::vector<Actions> m_actions;
-    const int m_defaultColumnCount = 2;
-    const int m_defaultRowCount = 3;
+    int m_defaultColumnCount = 4;
+    int m_defaultRowCount = 3;
+    std::vector<std::vector<double>> constraint_coeffs;
+    std::vector<double> bounds;
+    std::vector<int> constraintCompare;
 };
 
 #endif // PROMETHEEV_H
