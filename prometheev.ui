@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
+    <width>765</width>
     <height>436</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Promethee V</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -121,7 +121,7 @@
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>331</width>
+         <width>311</width>
          <height>371</height>
         </rect>
        </property>
@@ -180,9 +180,9 @@
       <widget class="QTableWidget" name="tableWidget_3">
        <property name="geometry">
         <rect>
-         <x>340</x>
+         <x>320</x>
          <y>10</y>
-         <width>381</width>
+         <width>411</width>
          <height>371</height>
         </rect>
        </property>

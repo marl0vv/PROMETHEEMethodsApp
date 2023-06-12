@@ -147,6 +147,7 @@ void PrometheeV::onConstraintNameLineEditChanged(const QString &text)
     {
         qDebug() << "index " << i << "constraint name:" << constraintName[i];
     }
+    prometheeV();
 }
 void PrometheeV::onConstraintCoeffsSpinBoxChanged(double d)
 {
@@ -186,6 +187,7 @@ void PrometheeV::onConstraintCompareComboBoxChanged(int index)
     {
         qDebug() << "index " << i << "compare index:" << constraintCompare[i];
     }
+    prometheeV();
 }
 
 void PrometheeV::onConstraintValueSpinBoxChanged(double d)
@@ -200,6 +202,7 @@ void PrometheeV::onConstraintValueSpinBoxChanged(double d)
     {
         qDebug() << "bound " << i << "bound content:" << bounds[i];
     }
+    prometheeV();
 }
 
 void PrometheeV::prometheeV()
