@@ -11,6 +11,7 @@
 
 
 
+
 PrometheeV::PrometheeV(QWidget *parent, std::vector<Actions> &actions) :
     QWidget(parent),
     ui(new Ui::PrometheeV)
@@ -125,6 +126,27 @@ void PrometheeV::on_pushButtonAddConstraint_clicked()
     ui->tableWidget->setCellWidget(defaultConstraintRow, defaultConstraintColumn + getActionsCount(), constraintValue);
 
 
+    //Заполнение имён ограничений
+    int defaultNameColumnIndex = 1;
+    constraintName.push_back("Ограничение");
+    QLineEdit* constraintName = new QLineEdit();
+    constraintName->setProperty("row", defaultConstraintRow);
+    connect(constraintName, &QLineEdit::textChanged, this, &PrometheeV::onConstraintNameLineEditChanged);
+    QString constraintNameString = "Ограничение";
+    constraintName->setText(constraintNameString);
+    ui->tableWidget->setCellWidget(defaultConstraintRow, defaultNameColumnIndex, constraintName);
+
+}
+void PrometheeV::onConstraintNameLineEditChanged(const QString &text)
+{
+    int row = sender()->property("row").toInt();
+    int defaultRow = 3;
+    constraintName[row - defaultRow] = text;
+    //тестовый вывод содержимого
+    for(int i = 0; i < constraintCompare.size(); i++)
+    {
+        qDebug() << "index " << i << "constraint name:" << constraintName[i];
+    }
 }
 void PrometheeV::onConstraintCoeffsSpinBoxChanged(double d)
 {
@@ -154,7 +176,6 @@ void PrometheeV::onConstraintCoeffsSpinBoxChanged(double d)
 void PrometheeV::onConstraintCompareComboBoxChanged(int index)
 {
     int row = sender()->property("row").toInt();
-
 
     int defaultRow = 3;
 
@@ -231,5 +252,125 @@ void PrometheeV::prometheeV()
         qDebug() << "x[" << j << "] = " << results[j]->solution_value();
     }
 
+    buildResultTable();
+    buildCompareTable();
 }
 
+void PrometheeV::buildResultTable()
+{
+    int defaultResultTableRowCount = 2;
+    ui->tableWidget_2->setRowCount(defaultResultTableRowCount + getActionsCount());
+
+    //заполняем столбец со всеми потоками предпочтения по умолчанию
+    for (int i = 0; i < getActionsCount(); ++i)
+    {
+        int defaultNetFlowColumnIndex = 1;
+        int defaultNewFlowRowIndex = 2;
+        QTableWidgetItem* netFlow = new QTableWidgetItem();
+        netFlow->setText(QString::number(m_actions[i].getPhi()));
+        ui->tableWidget_2->setItem(defaultNewFlowRowIndex + i, defaultNetFlowColumnIndex, netFlow);
+    }
+
+    //заполняем имена альтернатив
+    for (int i = 0; i < getActionsCount(); ++i)
+    {
+        int defaultNameColumnIndex = 0;
+        int defaultNameRowIndex = 2;
+        QTableWidgetItem* name = new QTableWidgetItem();
+        name->setText(m_actions[i].getName());
+        ui->tableWidget_2->setItem(defaultNameRowIndex + i, defaultNameColumnIndex, name);
+    }
+
+    double phiResultSum = 0; //сумма оптимальных потоков предпочтения
+    //указываем оптимальные потоки предпочтения
+    for (int i = 0; i < getActionsCount(); ++i)
+    {
+        int defaultResultColumnIndex = 2;
+        int defaultResultRowIndex = 2;
+        QTableWidgetItem* result = new QTableWidgetItem();
+
+        if (results[i]->solution_value() == 1)
+        {
+             result->setText("Да");
+             result->setBackground(Qt::green);
+             ui->tableWidget_2->setItem(defaultResultRowIndex + i, defaultResultColumnIndex, result);
+
+             phiResultSum += m_actions[i].getPhi();
+        }
+        else
+        {
+             result->setText("Нет");
+             result->setBackground(Qt::red);
+             ui->tableWidget_2->setItem(defaultResultRowIndex + i, defaultResultColumnIndex, result);
+        }
+    }
+
+    //заполняем ячейку с итоговым phi
+    QTableWidgetItem *phiResult = new QTableWidgetItem();
+    phiResult->setText(QString::number(phiResultSum));
+    int phiResultRowIndex = 1;
+    int phiResultColumnIndex = 2;
+    ui->tableWidget_2->setItem(phiResultRowIndex, phiResultColumnIndex, phiResult);
+
+}
+
+void PrometheeV::buildCompareTable()
+{
+    int defaultResultTableRowCount = 1;
+    ui->tableWidget_3->setRowCount(defaultResultTableRowCount + bounds.size());
+
+    for(int i = 0; i < bounds.size(); ++i)
+    {
+        //помещаем имена ограничений в таблицу
+        QTableWidgetItem *constraintTableName = new QTableWidgetItem();
+        constraintTableName->setText(constraintName[i]);
+        int defaultConstraintNameColumnIndex = 0;
+        int defaultConstraintNameRowIndex = 1;
+        ui->tableWidget_3->setItem(defaultConstraintNameRowIndex+i, defaultConstraintNameColumnIndex, constraintTableName);
+
+
+        //считаем LHS
+        double boundSums = 0;
+        for (int i = 0; i < constraint_coeffs.size(); ++i)
+        {
+             for (int j = 0; j < getActionsCount(); ++j)
+             {
+                 if (results[j]->solution_value() == 1)
+                 {
+                     boundSums += constraint_coeffs[i][j];
+                 }
+             }
+        }
+        QTableWidgetItem *resultSumBounds = new QTableWidgetItem();
+        resultSumBounds->setText(QString::number(boundSums));
+        int defaultLHSColumnIndex = 1;
+        int defaultLHSRowIndex = 1;
+        ui->tableWidget_3->setItem(defaultLHSRowIndex+i, defaultLHSColumnIndex, resultSumBounds);
+
+
+        //заполняем знаки сравнения
+        QTableWidgetItem *resultCompare = new QTableWidgetItem();
+        if (constraintCompare[i] == 0)
+        {
+             resultCompare->setText("<=");
+        }
+        if (constraintCompare[i] == 1)
+        {
+             resultCompare->setText("=");
+        }
+        if (constraintCompare[i] == 2)
+        {
+             resultCompare->setText(">=");
+        }
+        int defaultCompareColumnIndex = 2;
+        int defaultCompareRowIndex = 1;
+        ui->tableWidget_3->setItem(defaultCompareRowIndex+i, defaultCompareColumnIndex, resultCompare);
+
+        //заполняем ограничение
+        QTableWidgetItem *boundTable = new QTableWidgetItem();
+        boundTable->setText(QString::number(bounds[i]));
+        int defaultboundTableColumnIndex = 3;
+        int defaultboundTableRowIndex = 1;
+        ui->tableWidget_3->setItem( defaultboundTableRowIndex+i, defaultboundTableColumnIndex, boundTable);
+    }
+}

@@ -19,6 +19,8 @@ public:
     void buildTable();
     int getActionsCount() const {return m_actions.size();}
     void prometheeV();
+    void buildResultTable();
+    void buildCompareTable();
 
 
 private slots:
@@ -26,6 +28,7 @@ private slots:
     void onConstraintCoeffsSpinBoxChanged(double d);
     void onConstraintCompareComboBoxChanged(int index);
     void onConstraintValueSpinBoxChanged(double d);
+    void onConstraintNameLineEditChanged(const QString &text);
 
 private:
     Ui::PrometheeV *ui;
@@ -37,6 +40,7 @@ private:
     std::vector<double> bounds;
     std::vector<int> constraintCompare;
     std::vector<const operations_research::MPVariable*> results;
+    std::vector<QString> constraintName;
 };
 
 #endif // PROMETHEEV_H
