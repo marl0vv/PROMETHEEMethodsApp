@@ -275,6 +275,7 @@
     <addaction name="separator"/>
     <addaction name="action_2"/>
     <addaction name="action_prometheeTable"/>
+    <addaction name="actionPROMETHEE_V"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -319,6 +320,11 @@
   <action name="action_prometheeTable">
    <property name="text">
     <string>Таблица PROMETHEE</string>
+   </property>
+  </action>
+  <action name="actionPROMETHEE_V">
+   <property name="text">
+    <string>PROMETHEE V</string>
    </property>
   </action>
  </widget>

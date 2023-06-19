@@ -5,6 +5,7 @@
 #include <mainwindow.h>
 #include <QStack>
 
+
 int DFS(int **mas, bool* vis, int cur,int prev, QStack<int> Q,const int n, QGraphicsScene *scene4, double **point, QPen blackPen){
     if (vis[cur]==true) return -1;
     QStack<int> q;
@@ -160,10 +161,14 @@ Drawing::Drawing(QWidget *parent,std::vector<Actions> &actions,int &count) :
     phiNegativeLabel->setPos(710,390);
     scene->addItem(phiNegativeLabel);
 
-
-    double phiPositiveArray[m_drawingAlternativesAmount];
-    double phiNegativeArray[m_drawingAlternativesAmount];
-    double phiArray[m_drawingAlternativesAmount];
+    //заменил обычные сишные массивы на векторы, потому что программа ломалась в компиляторе MSVC
+    //надеюсь, что я ничего не сломал
+    std::vector<double> phiPositiveArray(m_drawingAlternativesAmount);
+    std::vector<double> phiNegativeArray(m_drawingAlternativesAmount);
+    std::vector<double> phiArray(m_drawingAlternativesAmount);
+   // double phiPositiveArray[m_drawingAlternativesAmount];
+   // double phiNegativeArray[m_drawingAlternativesAmount];
+   // double phiArray[m_drawingAlternativesAmount];
     // заполняем массивы значениями Phi альтернатив
     for (int i=0; i<m_drawingAlternativesAmount;i++)
     {

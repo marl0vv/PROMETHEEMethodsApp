@@ -669,3 +669,17 @@ void MainWindow::on_action_prometheeTable_triggered()
     table->show();
 }
 
+
+void MainWindow::on_actionPROMETHEE_V_triggered()
+{
+    if (m_actions.empty())
+    {
+        QMessageBox::warning(this, "Ошибка!","Для использования PROMETHEE V сначала необходимо сгенерировать таблицу!");
+        return;
+    }
+    PrometheeV *PrometheeVWindow = new PrometheeV(nullptr, m_actions);
+    PrometheeVWindow->setAttribute(Qt::WA_DeleteOnClose);
+    PrometheeVWindow->setWindowModality(Qt::ApplicationModal);
+    PrometheeVWindow->show();
+}
+
